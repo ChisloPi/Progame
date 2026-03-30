@@ -1,0 +1,2561 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕵️‍♂️ МИССИЯ: СПАСЕНИЕ ЦИФРОВОГО ПИТОМЦА</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-hero: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-orange: #f97316;
+            --accent-purple: #8b5cf6;
+            --text-main: #1e293b;
+            --text-dim: #64748b;
+            --glow-blue: 0 0 20px rgba(59, 130, 246, 0.15);
+            --glow-green: 0 0 20px rgba(34, 197, 94, 0.15);
+            --border-radius: 16px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Keyboard Hint Styles */
+        .kbd-hint {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            border-bottom: 2px dashed var(--accent-blue);
+        }
+
+        .kbd-tooltip {
+            visibility: hidden;
+            width: 280px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 15px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: var(--shadow-md);
+        }
+
+        .kbd-hint:hover .kbd-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .keyboard-svg {
+            margin-top: 10px;
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .key-rect { fill: #334155; stroke: #475569; stroke-width: 1; }
+        .key-highlight { fill: var(--accent-orange); stroke: #fff; }
+        .key-text { fill: white; font-family: sans-serif; font-size: 10px; font-weight: bold; }
+
+        /* Protection from copy */
+        .no-copy {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Header */
+        .hero {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 50px;
+            padding: 8px 24px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(28px, 5vw, 52px);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+
+        .hero-sub {
+            font-size: 16px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        /* Nav */
+        .nav-tabs {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 20px;
+        }
+
+        .nav-tabs-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-tab {
+            flex-shrink: 0;
+            padding: 16px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dim);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        /* Main structure */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+
+        .etap-section {
+            display: none;
+        }
+
+        .etap-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: #f1f5f9;
+        }
+
+        .card-icon.blue { background: #eff6ff; color: var(--accent-blue); }
+        .card-icon.green { background: #f0fdf4; color: var(--accent-green); }
+        .card-icon.yellow { background: #fefce8; color: var(--accent-yellow); }
+        .card-icon.orange { background: #fff7ed; color: var(--accent-orange); }
+        .card-icon.purple { background: #f5f3ff; color: var(--accent-purple); }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+
+        /* Legend */
+        .legend-block {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 28px;
+            font-size: 15px;
+            color: var(--text-main);
+        }
+
+        .legend-block .speaker {
+            font-weight: 800;
+            color: var(--accent-purple);
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Formula */
+        .formula-block {
+            margin: 20px 0;
+        }
+
+        .formula-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .formula-code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 16px 20px;
+            border-radius: 10px;
+            color: #065f46;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .formula-code:hover {
+            background: #e2e8f0;
+            border-color: #94a3b8;
+        }
+
+        /* Blocks */
+        .tip-block {
+            background: #fefce8;
+            border: 1px solid #fef08a;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            gap: 12px;
+            color: #854d0e;
+            font-size: 14px;
+        }
+
+        .warning-block {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            gap: 12px;
+            color: #991b1b;
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .download-btn, .complete-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .download-btn {
+            background: var(--accent-blue);
+            color: white;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+        }
+
+        .download-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .complete-btn {
+            background: var(--accent-green);
+            color: white;
+            box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+        }
+
+        .complete-btn:hover {
+            background: #16a34a;
+            transform: translateY(-1px);
+        }
+
+        /* Excel mockup */
+        .excel-mock {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .excel-toolbar {
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .excel-table th {
+            background: #f8fafc;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 10px;
+            text-align: left;
+            font-size: 11px;
+            color: #475569;
+        }
+
+        .excel-table td {
+            padding: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        /* Progress etc */
+        .progress-section {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            transition: width 0.5s ease;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 16px;
+            padding: 20px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: #eff6ff;
+            color: var(--accent-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .step-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .step-checkbox.checked {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        /* Pet anim */
+        .pet-container {
+            margin: 20px auto;
+            width: 80px;
+            height: 80px;
+            font-size: 60px;
+            text-align: center;
+            animation: bounce 2s infinite ease-in-out;
+        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        .final-banner {
+            background: #f0fdf4;
+            border: 2px solid var(--accent-green);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+        }
+    </style>
+
+
+        .hero h1 .emoji-title {
+            -webkit-text-fill-color: initial;
+        }
+
+        .hero-sub {
+            font-size: 16px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-dim);
+            background: rgba(255,255,255,0.04);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .hero-meta-item .icon {
+            font-size: 16px;
+        }
+
+        /* Pet animation */
+        .pet-container {
+            margin: 30px auto 0;
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+
+        .pet-sprite {
+            font-size: 72px;
+            animation: petBounce 2s ease-in-out infinite;
+            display: block;
+            text-align: center;
+            filter: drop-shadow(0 0 20px rgba(0,212,255,0.4));
+        }
+
+        @keyframes petBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .pet-pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(0,212,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ringPulse 2s ease-out infinite;
+        }
+
+        @keyframes ringPulse {
+            0% { width: 60px; height: 60px; opacity: 0.8; }
+            100% { width: 140px; height: 140px; opacity: 0; }
+        }
+
+        /* Progress bar */
+        .progress-section {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px 20px 10px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-percent {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px rgba(0,212,255,0.4);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            position: relative;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .progress-step-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dim);
+            transition: all 0.4s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-step-dot.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+            box-shadow: var(--glow-blue);
+        }
+
+        .progress-step-dot.completed {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #fff;
+            box-shadow: var(--glow-green);
+        }
+
+        .progress-step-label {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 20px;
+        }
+
+        .nav-tabs-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-tabs-inner::-webkit-scrollbar { display: none; }
+
+        .nav-tab {
+            flex-shrink: 0;
+            padding: 16px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dim);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+            position: relative;
+            user-select: none;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-main);
+        }
+
+        .nav-tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .nav-tab.completed::after {
+            content: '✓';
+            margin-left: 6px;
+            color: var(--accent-green);
+            font-size: 12px;
+        }
+
+        .nav-tab.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .nav-tab .tab-icon {
+            margin-right: 6px;
+        }
+
+        /* Main content */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px 100px;
+        }
+
+        /* Section (etap) */
+        .etap-section {
+            display: none;
+        }
+
+        .etap-section.active {
+            display: block;
+            animation: fadeSlideIn 0.5s ease;
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(0,212,255,0.15);
+            background: var(--bg-card-hover);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .card-icon.blue { background: rgba(0,212,255,0.12); }
+        .card-icon.green { background: rgba(0,255,136,0.12); }
+        .card-icon.red { background: rgba(255,51,102,0.12); }
+        .card-icon.yellow { background: rgba(255,204,0,0.12); }
+        .card-icon.purple { background: rgba(168,85,247,0.12); }
+        .card-icon.orange { background: rgba(255,140,0,0.12); }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* Legend / story block */
+        .legend-block {
+            background: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(0,212,255,0.08));
+            border: 1px solid rgba(168,85,247,0.2);
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #c8d0e0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .legend-block::before {
+            content: '📜';
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 28px;
+            opacity: 0.3;
+        }
+
+        .legend-block .speaker {
+            font-weight: 700;
+            color: var(--accent-purple);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Download button */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 14px 28px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0,212,255,0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(0,212,255,0.5);
+        }
+
+        .download-btn .btn-icon {
+            font-size: 20px;
+        }
+
+        /* Steps */
+        .step-list {
+            counter-reset: stepCounter;
+            list-style: none;
+        }
+
+        .step-item {
+            counter-increment: stepCounter;
+            display: flex;
+            gap: 16px;
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .step-item:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(0,212,255,0.1);
+            border: 1px solid rgba(0,212,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--accent-blue);
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-main);
+        }
+
+        .step-content .step-detail {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 6px;
+            line-height: 1.6;
+        }
+
+        .step-content .menu-path {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0,212,255,0.08);
+            border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-blue);
+            margin: 6px 0;
+            flex-wrap: wrap;
+        }
+
+        .menu-path .arrow {
+            color: var(--accent-purple);
+            font-weight: 700;
+        }
+
+        /* Clickable step highlight */
+        .step-item.highlight {
+            background: rgba(0,255,136,0.05);
+            border-radius: 12px;
+            padding: 18px 16px;
+            border: 1px solid rgba(0,255,136,0.15);
+            margin: 8px 0;
+        }
+
+        .step-item.highlight .step-number {
+            background: rgba(0,255,136,0.15);
+            border-color: rgba(0,255,136,0.3);
+            color: var(--accent-green);
+        }
+
+        /* Checkbox step */
+        .step-checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid rgba(255,255,255,0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s;
+            margin-top: 7px;
+        }
+
+        .step-checkbox:hover {
+            border-color: var(--accent-green);
+        }
+
+        .step-checkbox.checked {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .step-checkbox.checked::after {
+            content: '✓';
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .step-item.done .step-content p {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        /* Screenshot / visual guide mockup */
+        .visual-guide {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        .visual-guide-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent-yellow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Excel mockup */
+        .excel-mock {
+            background: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            margin: 12px 0;
+        }
+
+        .excel-toolbar {
+            background: #f1f5f9;
+            padding: 8px 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-bottom: 1px solid #cbd5e1;
+            color: #475569;
+        }
+
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .excel-table th {
+            background: #e2e8f0;
+            padding: 8px 10px;
+            text-align: left;
+            font-weight: 700;
+            color: #1e293b;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .excel-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            font-size: 12px;
+        }
+
+        .excel-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .excel-table .filter-icon {
+            cursor: pointer;
+            margin-left: 4px;
+            color: var(--accent-blue);
+            font-size: 10px;
+        }
+
+        .excel-table .highlight-row td {
+            background: rgba(0,255,136,0.1);
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .excel-table .col-header {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Arrow annotations */
+        .arrow-annotation {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--accent-yellow);
+            font-size: 13px;
+            font-weight: 700;
+            animation: arrow-bounce 1s ease-in-out infinite;
+            margin: 4px 0;
+        }
+
+        @keyframes arrow-bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(6px); }
+        }
+
+        .arrow-down {
+            animation: arrow-bounce-down 1s ease-in-out infinite;
+        }
+
+        @keyframes arrow-bounce-down {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(6px); }
+        }
+
+        /* Formula block */
+        .formula-block {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid var(--accent-green);
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin: 16px 0;
+        }
+
+        .formula-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .formula-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            color: #166534;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            overflow-x: auto;
+        }
+
+        .formula-code:hover {
+            background: #f8fafc;
+        }
+
+        .formula-code .copy-icon {
+            font-size: 16px;
+            opacity: 0.5;
+            flex-shrink: 0;
+            margin-left: 12px;
+        }
+
+        .formula-code.copied {
+            border-color: var(--accent-green);
+            box-shadow: var(--glow-green);
+        }
+
+        .formula-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 10px;
+            line-height: 1.7;
+        }
+
+        .formula-desc strong {
+            color: var(--text-main);
+        }
+
+        /* Tip block */
+        .tip-block {
+            background: rgba(255,204,0,0.06);
+            border: 1px solid rgba(255,204,0,0.15);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .tip-block .tip-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .tip-block p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+
+        .tip-block p strong {
+            color: var(--accent-yellow);
+        }
+
+        /* Warning block */
+        .warning-block {
+            background: rgba(255,51,102,0.06);
+            border: 1px solid rgba(255,51,102,0.15);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .warning-block .warn-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .warning-block p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+
+        /* Quiz */
+        .quiz-block {
+            display: none;
+        }
+
+        /* Key combo */
+        .key-combo {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            padding: 0 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-bottom: 3px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .key.special {
+            background: rgba(0,212,255,0.12);
+            border-color: rgba(0,212,255,0.25);
+            border-bottom-color: rgba(0,212,255,0.35);
+            color: var(--accent-blue);
+        }
+
+        /* Interactive demo */
+        .demo-zone {
+            display: none;
+        }
+
+        /* Accordion for extra info */
+        .accordion {
+            display: none;
+        }
+
+        /* Table for stats */
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .stats-table th {
+            text-align: left;
+            padding: 10px 14px;
+            background: rgba(0,212,255,0.06);
+            color: var(--accent-blue);
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .stats-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .stats-table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* Cheatsheet */
+        .cheatsheet {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .cheatsheet-title {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cheatsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .cheatsheet-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: #e2e8f0;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .cheatsheet-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #cbd5e1;
+            color: #334155;
+        }
+
+        .cheatsheet-table td code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #166534;
+        }
+
+        /* HW Card */
+        .homework-card {
+            background: #fffbef;
+            border: 1px solid #fef08a;
+            border-radius: 14px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .homework-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--accent-orange);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .homework-card p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+
+        /* Final banner */
+        .final-banner {
+            background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,212,255,0.1));
+            border: 2px solid var(--accent-green);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse, rgba(0,255,136,0.1) 0%, transparent 70%);
+            animation: rotateSlow 10s linear infinite;
+        }
+
+        @keyframes rotateSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .final-banner h2 {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--accent-green);
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .final-banner p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-main);
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .final-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0fdf4;
+            border: 1px solid var(--accent-green);
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-top: 20px;
+            position: relative;
+        }
+
+        /* Completion confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Section number badge */
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .section-badge.intro { background: rgba(168,85,247,0.12); color: var(--accent-purple); border: 1px solid rgba(168,85,247,0.2); }
+        .section-badge.etap1 { background: rgba(0,212,255,0.12); color: var(--accent-blue); border: 1px solid rgba(0,212,255,0.2); }
+        .section-badge.etap2 { background: rgba(0,255,136,0.12); color: var(--accent-green); border: 1px solid rgba(0,255,136,0.2); }
+        .section-badge.etap3 { background: rgba(255,140,0,0.12); color: var(--accent-orange); border: 1px solid rgba(255,140,0,0.2); }
+        .section-badge.finale { background: rgba(255,204,0,0.12); color: var(--accent-yellow); border: 1px solid rgba(255,204,0,0.2); }
+
+        /* Timer */
+        .timer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-dim);
+            background: rgba(255,255,255,0.04);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            margin-left: 8px;
+        }
+
+        /* Complete etap button */
+        .complete-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--accent-green), #00cc6a);
+            color: #000;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0,255,136,0.3);
+            margin-top: 20px;
+        }
+
+        .complete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(0,255,136,0.5);
+        }
+
+        .complete-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card { padding: 20px; }
+            .hero { padding: 40px 16px 30px; }
+            .vital-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .vital-bar { min-width: auto; width: 100%; }
+            .excel-mock { overflow-x: auto; }
+            .excel-table { min-width: 500px; }
+            .nav-tab { padding: 14px 14px; font-size: 12px; }
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            border: 1px solid rgba(0,255,136,0.3);
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-green);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            z-index: 999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Pointer arrow (animated) */
+        .pointer-arrow {
+            display: inline-block;
+            font-size: 20px;
+            animation: pointerPulse 1s ease-in-out infinite;
+        }
+
+        .pointer-arrow.right {
+            animation: arrow-bounce 1s ease-in-out infinite;
+        }
+
+        .pointer-arrow.down {
+            animation: arrow-bounce-down 1s ease-in-out infinite;
+        }
+
+        @keyframes pointerPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        /* Filter demo */
+        .filter-demo {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Confetti container -->
+<div class="confetti-container" id="confetti"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <span>✅</span>
+    <span id="toast-text">Этап завершён!</span>
+</div>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+    <div class="hero-badge">🔐 СЕКРЕТНАЯ ОПЕРАЦИЯ</div>
+    <h1><span class="emoji-title">🕵️‍♂️</span> МИССИЯ: СПАСЕНИЕ<br>ЦИФРОВОГО ПИТОМЦА</h1>
+
+    <div class="pet-container">
+        <div class="pet-pulse-ring"></div>
+        <span class="pet-sprite">🐶</span>
+    </div>
+</header>
+
+<!-- ===== PROGRESS ===== -->
+<div class="progress-section">
+    <div class="progress-header">
+        <span class="progress-label">Прогресс миссии</span>
+        <span class="progress-percent" id="progress-percent">0%</span>
+    </div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="progress-steps">
+        <div class="progress-step">
+            <div class="progress-step-dot active" id="step-dot-0">📜</div>
+            <span class="progress-step-label">Легенда</span>
+        </div>
+        <div class="progress-step">
+            <div class="progress-step-dot" id="step-dot-1">🔍</div>
+            <span class="progress-step-label">Этап 1</span>
+        </div>
+        <div class="progress-step">
+            <div class="progress-step-dot" id="step-dot-2">📡</div>
+            <span class="progress-step-label">Этап 2</span>
+        </div>
+        <div class="progress-step">
+            <div class="progress-step-dot" id="step-dot-3">💚</div>
+            <span class="progress-step-label">Этап 3</span>
+        </div>
+        <div class="progress-step">
+            <div class="progress-step-dot" id="step-dot-4">🏆</div>
+            <span class="progress-step-label">Финал</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== NAV TABS ===== -->
+<nav class="nav-tabs">
+    <div class="nav-tabs-inner">
+        <div class="nav-tab active" data-tab="intro"><span class="tab-icon">📜</span> Легенда</div>
+        <div class="nav-tab" data-tab="etap1"><span class="tab-icon">🔍</span> Этап 1</div>
+        <div class="nav-tab locked" data-tab="etap2"><span class="tab-icon">📡</span> Этап 2</div>
+        <div class="nav-tab locked" data-tab="etap3"><span class="tab-icon">💚</span> Этап 3</div>
+        <div class="nav-tab locked" data-tab="finale"><span class="tab-icon">🏆</span> Финал</div>
+    </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-content">
+
+    <!-- ============================== -->
+    <!-- INTRO / LEGEND SECTION -->
+    <!-- ============================== -->
+    <section class="etap-section active" id="section-intro">
+        <div class="section-badge intro">📜 Вводная легенда</div>
+
+        <div class="legend-block">
+            <span class="speaker">🔊 Голос командира (читай вслух!):</span>
+            «Агенты, внимание!<br><br>
+            Сегодня в 07:00 с сервера <strong>Цифрового зоопарка</strong> было похищено редкое существо — <strong>цифровой питомец по кличке Байтик</strong> 🐶.<br><br>
+            По данным нашей разведки, похитителем является один из <strong>100 подозреваемых</strong>, чьи досье хранятся в секретной базе данных.<br><br>
+            Свидетели сообщают следующие приметы:<br>
+            🔸 <strong>Рыжие волосы</strong><br>
+            🔸 <strong>Шрам на левой щеке</strong><br>
+            🔸 <strong>Размер обуви — 38</strong><br><br>
+            Ваша миссия — <strong>вычислить похитителя</strong>, <strong>наладить связь с Байтиком</strong> и <strong>создать систему жизнеобеспечения</strong> для его спасения.<br><br>
+            Удачи, агенты! Время пошло!»
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon purple">📥</div>
+                <div>
+                    <div class="card-title">Скачай секретную базу данных</div>
+                    <div class="card-subtitle">Файл с досье 100 подозреваемых</div>
+                </div>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px; line-height: 1.7;">
+                Прежде чем начать миссию, нужно скачать файл с базой данных подозреваемых. Нажми на кнопку ниже — файл откроется на Яндекс.Диске. Нажми <strong style="color: var(--accent-yellow)">«Скачать»</strong> и открой в Excel.
+            </p>
+
+            <a href="https://disk.yandex.ru/i/3fbxTmGzVd4b_g" target="_blank" class="download-btn">
+                <span class="btn-icon">📂</span>
+                Скачать базу подозреваемых
+                <span class="pointer-arrow right">👈</span>
+            </a>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="complete-btn" onclick="completeSection('intro')">
+                База скачана, начинаем миссию! 🚀
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- ЭТАП 1: ФИЛЬТР -->
+    <!-- ============================== -->
+    <section class="etap-section" id="section-etap1">
+        <div class="section-badge etap1">🔍 Этап 1: «Поиск по базе»</div>
+
+        <div class="legend-block">
+            <span class="speaker">🔊 Командир:</span>
+            «Агенты! Перед вами база данных из 100 подозреваемых. Среди них — похититель Байтика. Используйте <strong>фильтры</strong>, чтобы отсеять невиновных и найти преступника. Приметы: <strong>рыжий</strong>, <strong>шрам на левой щеке</strong>, <strong>обувь 38-го размера</strong>.»
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">🎯</div>
+                <div>
+                    <div class="card-title">Цель этапа</div>
+                    <div class="card-subtitle">Что нужно сделать</div>
+                </div>
+            </div>
+            <p style="font-size: 14px; line-height: 1.8;">
+                Среди 100 подозреваемых найти <strong>ОДНОГО</strong>, у кого совпадают все три приметы:
+            </p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+                <span style="background: rgba(234, 88, 12, 0.1); border: 1px solid rgba(234, 88, 12, 0.2); padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;">🔸 Цвет волос: рыжий</span>
+                <span style="background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.2); padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;">🔸 Примета: шрам на левой щеке</span>
+                <span style="background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(147, 51, 234, 0.2); padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;">🔸 Размер обуви: 38</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon yellow">📝</div>
+                <div>
+                    <div class="card-title">Пошаговая инструкция</div>
+                    <div class="card-subtitle">Делай по порядку — каждый шаг важен!</div>
+                </div>
+            </div>
+
+            <ol class="step-list">
+                <li class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <p>📂 <strong>Открой файл</strong> с базой подозреваемых в Excel.</p>
+                        <div class="step-detail">У тебя должна быть таблица с колонками: Номер, Имя, Возраст, Цвет волос, Особая примета, Размер обуви и другие.</div>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <p>🖱️ <strong>Выдели всю таблицу</strong> — нажми на ячейку A1, затем нажми 
+                            <span class="kbd-hint">
+                                <span class="key-combo"><span class="key special">Ctrl</span>+<span class="key">A</span></span>
+                                <span class="kbd-tooltip">
+                                    На ноутбуке это кнопки:
+                                    <svg class="keyboard-svg" width="200" height="60">
+                                        <rect x="10" y="10" width="30" height="30" class="key-rect key-highlight" rx="3" />
+                                        <text x="15" y="30" class="key-text">Ctrl</text>
+                                        <rect x="50" y="10" width="30" height="30" class="key-rect key-highlight" rx="3" />
+                                        <text x="60" y="30" class="key-text">A</text>
+                                    </svg>
+                                </span>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item highlight">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <p>🔽 <strong>Включи фильтр!</strong></p>
+
+                        <div class="visual-guide">
+                            <div class="visual-guide-title"><span class="pointer-arrow right">👉</span> Куда нажимать в Excel:</div>
+                            <div class="menu-path">
+                                Главная <span class="arrow">→</span> Сортировка и фильтр <span class="arrow">→</span> Фильтр
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <p>🟠 <strong>Фильтруем по цвету волос.</strong> Нажми стрелку <strong>▼</strong> в столбце <strong>«Цвет волос»</strong> и выбери только «рыжий».</p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <p>🔴 <strong>Фильтруем по особой примете.</strong> Нажми стрелку <strong>▼</strong> в столбце <strong>«Особая примета»</strong> и выбери «шрам на левой щеке».</p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <p>👟 <strong>Фильтруем по размеру обуви.</strong> Нажми стрелку <strong>▼</strong> в столбце <strong>«Размер обуви»</strong> и выбери «38».</p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item highlight">
+                    <div class="step-number">🎉</div>
+                    <div class="step-content">
+                        <p>🎯 <strong>РЕЗУЛЬТАТ:</strong> На экране осталась <strong>ОДНА строка</strong> — это и есть похититель!</p>
+                        <p style="font-size: 18px; margin-top: 12px; padding: 14px; background: rgba(22, 163, 74, 0.05); border-radius: 10px; border: 1px solid rgba(22, 163, 74, 0.2); text-align: center;">
+                            🦊 Похититель — <strong style="color: var(--accent-green); font-size: 20px;">Лиса-99</strong> (строка № 47)
+                        </p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+            </ol>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="complete-btn" onclick="completeSection('etap1')">
+                Похититель найден! Перейти к Этапу 2 🔓
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- ЭТАП 2: СЕКРЕТНЫЙ ЧАТ -->
+    <!-- ============================== -->
+    <section class="etap-section" id="section-etap2">
+        <div class="section-badge etap2">📡 Этап 2: «Секретный чат»</div>
+
+        <div class="legend-block">
+            <span class="speaker">🔊 Командир:</span>
+            «Отлично, агенты! Похититель вычислен — это <strong>Лиса-99</strong>. Спецназ уже выехал. Но Байтик заперт в цифровой клетке и пытается с нами связаться. Он шлёт сигналы — <strong>случайные фразы</strong>. Нам нужно построить <strong>приёмник</strong>, который будет их ловить!»
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">🎯</div>
+                <div>
+                    <div class="card-title">Цель этапа</div>
+                    <div class="card-subtitle">Создать «кнопку связи» с Байтиком</div>
+                </div>
+            </div>
+            <p style="font-size: 14px; line-height: 1.8;">
+                При нажатии 
+                <span class="kbd-hint">
+                    <span class="key special">F9</span>
+                    <span class="kbd-tooltip">
+                        На ноутбуке, если кнопка не срабатывает, нажми её вместе с <b>Fn</b>:
+                        <svg class="keyboard-svg" width="200" height="60">
+                            <rect x="10" y="30" width="30" height="25" class="key-rect key-highlight" rx="3" />
+                            <text x="17" y="47" class="key-text">Fn</text>
+                            <rect x="140" y="5" width="30" height="20" class="key-rect key-highlight" rx="3" />
+                            <text x="145" y="18" class="key-text">F9</text>
+                        </svg>
+                    </span>
+                </span>
+                в ячейке будет появляться <strong>случайная фраза</strong> от питомца.
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon yellow">📝</div>
+                <div>
+                    <div class="card-title">Шаг 1: Создай словарь фраз</div>
+                    <div class="card-subtitle">Лист 2 — «Секретный чат»</div>
+                </div>
+            </div>
+
+            <ol class="step-list">
+                <li class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <p>📄 <strong>Создай новый лист</strong> в Excel и назови его <strong>«Секретный чат»</strong>.</p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <p>📋 <strong>Заполни словарь фраз.</strong> Введи эти данные в столбцы A и B:</p>
+
+                        <div class="excel-mock no-copy">
+                            <div class="excel-toolbar">
+                                <span style="font-size: 12px; color: var(--text-dim);">Словарь фраз (столбцы A и B):</span>
+                            </div>
+                            <table class="excel-table">
+                                <thead>
+                                    <tr><th style="width: 40px;"></th><th>A</th><th>B</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="color: var(--text-dim);">1</td><td><strong>№ фразы</strong></td><td><strong>Сообщение от Байтика</strong></td></tr>
+                                    <tr><td style="color: var(--text-dim);">2</td><td>1</td><td>🐾 Хочу гулять!</td></tr>
+                                    <tr><td style="color: var(--text-dim);">3</td><td>2</td><td>🦴 Дай косточку!</td></tr>
+                                    <tr><td style="color: var(--text-dim);">4</td><td>3</td><td>😴 Я хочу спать...</td></tr>
+                                    <tr><td style="color: var(--text-dim);">5</td><td>4</td><td>🎾 Давай играть!</td></tr>
+                                    <tr><td style="color: var(--text-dim);">6</td><td>5</td><td>💧 Хочу пить!</td></tr>
+                                    <tr><td style="color: var(--text-dim);">7</td><td>6</td><td>🤗 Обними меня!</td></tr>
+                                    <tr><td style="color: var(--text-dim);">8</td><td>7</td><td>🎵 Спой мне песенку!</td></tr>
+                                    <tr><td style="color: var(--text-dim);">9</td><td>8</td><td>🐶 Гав-гав! Я тебя люблю!</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">⚡</div>
+                <div>
+                    <div class="card-title">Шаг 2: Вводим формулу приёма</div>
+                    <div class="card-subtitle">Магия Excel</div>
+                </div>
+            </div>
+
+            <ol class="step-list">
+                <li class="step-item highlight">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <p>🎲 <strong>Введи формулу в ячейку D1:</strong></p>
+
+                        <div class="formula-block">
+                            <div class="formula-label">📍 Ячейка D1 — Случайная фраза</div>
+                            <div class="formula-code" onclick="copyFormula(this, '=ИНДЕКС(B2:B9;СЛУЧМЕЖДУ(1;8))')">
+                                <span>=ИНДЕКС(B2:B9;СЛУЧМЕЖДУ(1;8))</span>
+                                <span class="copy-icon">📋</span>
+                            </div>
+                            <div class="formula-desc">
+                                <strong>Что делает:</strong> Выбирает случайную строку из твоего списка сообщений.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <p>📻 <strong>Нажми F9 — это твоя «кнопка связи»!</strong></p>
+                        <p class="step-detail">
+                            Каждое нажатие на 
+                            <span class="kbd-hint">
+                                <span class="key special">F9</span>
+                                <span class="kbd-tooltip">
+                                    Не забывай: на многих ноутбуках нужно нажимать <b>Fn + F9</b>
+                                    <svg class="keyboard-svg" width="200" height="60">
+                                        <rect x="10" y="30" width="30" height="25" class="key-rect key-highlight" rx="3" />
+                                        <text x="17" y="47" class="key-text">Fn</text>
+                                        <rect x="140" y="5" width="30" height="20" class="key-rect key-highlight" rx="3" />
+                                        <text x="145" y="18" class="key-text">F9</text>
+                                    </svg>
+                                </span>
+                            </span>
+                            меняет фразу в ячейке!
+                        </p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+            </ol>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="complete-btn" onclick="completeSection('etap2')">
+                Связь установлена! Перейти к Этапу 3 💚
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- ЭТАП 3: ВИТАЛАЙЗЕР -->
+    <!-- ============================== -->
+    <section class="etap-section" id="section-etap3">
+        <div class="section-badge etap3">💚 Этап 3: «Виталайзер»</div>
+
+        <div class="legend-block">
+            <span class="speaker">🔊 Командир:</span>
+            «Байтик спасён! 🎉 Но он ослаб в плену. Теперь наша задача — следить за его состоянием. Мы создадим <strong>Виталайзер</strong> — панель, которая показывает уровень сытости, здоровья и настроения. Если показатель падает — панель краснеет и бьёт тревогу!»
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon orange">🎯</div>
+                <div>
+                    <div class="card-title">Цель этапа</div>
+                    <div class="card-subtitle">Создать шкалу здоровья с умным форматированием</div>
+                </div>
+            </div>
+            <p style="font-size: 14px; line-height: 1.8;">
+                Создадим панель, где:
+            </p>
+            <div style="margin-top: 10px; font-size: 14px; line-height: 2;">
+                🔴 Число <strong>меньше 30</strong> → ячейка становится <strong style="color: var(--accent-red);">красной</strong> → 😢 Критично!<br>
+                🟡 Число <strong>от 30 до 70</strong> → ячейка становится <strong style="color: var(--accent-yellow);">жёлтой</strong> → 😐 Норма<br>
+                🟢 Число <strong>больше 70</strong> → ячейка становится <strong style="color: var(--accent-green);">зелёной</strong> → 😊 Счастлив!
+            </div>
+        </div>
+
+        <!-- Create table -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon yellow">📝</div>
+                <div>
+                    <div class="card-title">Шаг 1: Создай таблицу «Виталайзер»</div>
+                    <div class="card-subtitle">Лист 3 — новый лист</div>
+                </div>
+            </div>
+
+            <ol class="step-list">
+                <li class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <p>📄 <strong>Создай третий лист</strong> и назови его <strong>«Виталайзер»</strong></p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <p>📋 <strong>Заполни таблицу:</strong></p>
+
+                        <div class="excel-mock">
+                            <div class="excel-toolbar">
+                                <span style="font-size: 12px; color: var(--text-dim);">Лист «Виталайзер»:</span>
+                            </div>
+                            <table class="excel-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;"></th>
+                                        <th>A</th>
+                                        <th>B</th>
+                                        <th>C</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="color: var(--text-dim);">1</td><td><strong>Показатель</strong></td><td><strong>Уровень (0–100)</strong></td><td><strong>Статус</strong></td></tr>
+                                    <tr><td style="color: var(--text-dim);">2</td><td>🍕 Сытость</td><td>75</td><td style="color: var(--accent-green);">← формула</td></tr>
+                                    <tr><td style="color: var(--text-dim);">3</td><td>❤️ Здоровье</td><td>45</td><td style="color: var(--accent-green);">← формула</td></tr>
+                                    <tr><td style="color: var(--text-dim);">4</td><td>🎮 Настроение</td><td>15</td><td style="color: var(--accent-green);">← формула</td></tr>
+                                    <tr><td style="color: var(--text-dim);">5</td><td>💤 Сон</td><td>90</td><td style="color: var(--accent-green);">← формула</td></tr>
+                                    <tr><td style="color: var(--text-dim);">6</td><td>🧼 Чистота</td><td>25</td><td style="color: var(--accent-green);">← формула</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- IF formula -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">⚡</div>
+                <div>
+                    <div class="card-title">Шаг 2: Формула ЕСЛИ (статус)</div>
+                    <div class="card-subtitle">Индикатор состояния</div>
+                </div>
+            </div>
+
+            <ol class="step-list">
+                <li class="step-item highlight">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <p>🧠 <strong>Введи формулу в ячейку C2:</strong></p>
+
+                        <div class="formula-block">
+                            <div class="formula-label">📍 Ячейка C2 — Статус питомца</div>
+                            <div class="formula-code" onclick="copyFormula(this, '=ЕСЛИ(B2<30;&quot;😢 Критично!&quot;;ЕСЛИ(B2<=70;&quot;😐 Норма&quot;;&quot;😊 Счастлив!&quot;))')">
+                                <span>=ЕСЛИ(B2&lt;30;"😢 Критично!";ЕСЛИ(B2&lt;=70;"😐 Норма";"😊 Счастлив!"))</span>
+                                <span class="copy-icon">📋</span>
+                            </div>
+                        </div>
+
+                        <div class="visual-guide">
+                            <div style="font-size: 14px; line-height: 2; color: var(--text-dim);">
+                                <span style="background: rgba(220, 38, 38, 0.1); padding: 4px 10px; border-radius: 6px;">Меньше 30</span> → 😢 <strong style="color: var(--accent-red);">Критично!</strong><br>
+                                <span style="background: rgba(202, 138, 4, 0.1); padding: 4px 10px; border-radius: 6px;">От 30 до 70</span> → 😐 <strong style="color: var(--accent-yellow);">Норма</strong><br>
+                                <span style="background: rgba(22, 163, 74, 0.1); padding: 4px 10px; border-radius: 6px;">Больше 70</span> → 😊 <strong style="color: var(--accent-green);">Счастлив!</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <p>📋 <strong>Протяни формулу вниз</strong> до ячейки C6.</p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Conditional formatting -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon red">🎨</div>
+                <div>
+                    <div class="card-title">Шаг 3: Условное форматирование</div>
+                    <div class="card-subtitle">Делаем ячейки цветными</div>
+                </div>
+            </div>
+
+            <ol class="step-list">
+                <li class="step-item">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <p>🖱️ <strong>Выдели ячейки B2:B6</strong> (все числа).</p>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item highlight">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <p>🎨 <strong>Открой условное форматирование:</strong></p>
+
+                        <div class="visual-guide">
+                            <div class="visual-guide-title"><span class="pointer-arrow right">👉</span> Куда нажимать в Excel:</div>
+                            <div class="menu-path">
+                                Главная <span class="arrow">→</span> Условное форматирование <span class="arrow">→</span> Правила выделения ячеек
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+
+                <li class="step-item">
+                    <div class="step-number">7</div>
+                    <div class="step-content">
+                        <p>🔴 <strong>Настрой 3 правила:</strong></p>
+                        <div style="font-size: 13px; line-height: 1.8; margin-top: 10px;">
+                            1. Меньше <b>30</b> — 🔴 красный фон<br>
+                            2. Между <b>30</b> и <b>70</b> — 🟡 жёлтый фон<br>
+                            3. Больше <b>70</b> — 🟢 зелёный фон
+                        </div>
+                    </div>
+                    <div class="step-checkbox" onclick="toggleCheck(this)"></div>
+                </li>
+            </ol>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="complete-btn" onclick="completeSection('etap3')">
+                Виталайзер готов! Перейти к финалу 🏆
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- ФИНАЛ -->
+    <!-- ============================== -->
+    <section class="etap-section" id="section-finale">
+        <div class="section-badge finale">🏆 Финал миссии</div>
+
+        <div class="final-banner">
+            <h2>🎉 МИССИЯ ВЫПОЛНЕНА!</h2>
+            <p>
+                ✅ Мы <strong>вычислили похитителя</strong> с помощью фильтров.<br><br>
+                ✅ Мы <strong>наладили связь</strong> с Байтиком.<br><br>
+                ✅ Мы <strong>создали систему жизнеобеспечения</strong>.
+            </p>
+            <div class="final-badge">
+                🎖️ Звание: Кибер-агент 1 уровня
+            </div>
+        </div>
+
+        <!-- Pet celebration -->
+        <div style="text-align: center; margin: 30px 0;">
+            <div class="pet-container" style="margin: 0 auto;">
+                <div class="pet-pulse-ring"></div>
+                <span class="pet-sprite" style="font-size: 80px;">🐶</span>
+            </div>
+            <p style="font-size: 18px; margin-top: 20px; color: var(--accent-green); font-weight: 700;">Байтик спасён и счастлив!</p>
+            <p style="font-size: 14px; color: var(--text-dim); margin-top: 8px;">Спасибо, агент! Ты настоящий герой!</p>
+        </div>
+
+        <!-- Cheatsheet -->
+        <div class="cheatsheet">
+            <div class="cheatsheet-title">📎 Шпаргалка — сохрани себе!</div>
+            <div style="overflow-x: auto;">
+                <table class="cheatsheet-table">
+                    <thead>
+                        <tr>
+                            <th>Что</th>
+                            <th>Формула</th>
+                            <th>Что делает</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Случайная фраза</td>
+                            <td><code>=ИНДЕКС(B2:B9;СЛУЧМЕЖДУ(1;8))</code></td>
+                            <td>Выбирает сообщение из списка</td>
+                        </tr>
+                        <tr>
+                            <td>Статус питомца</td>
+                            <td><code>=ЕСЛИ(B2&lt;30;"😢";ЕСЛИ(B2&lt;=70;"😐";"😊"))</code></td>
+                            <td>Текст по условию</td>
+                        </tr>
+                        <tr>
+                            <td>Обновить</td>
+                            <td><code>F9</code></td>
+                            <td>Пересчёт всех формул</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Homework -->
+        <div class="homework-card">
+            <div class="homework-title">🎁 Домашнее задание (по желанию)</div>
+            <p>
+                «Добавь Байтику ещё <strong>3 показателя</strong> (например: Ловкость 🏃, Дружелюбие 🤝, Магия ✨), настрой для них форматирование и придумай <strong>5 новых фраз</strong> для секретного чата!»
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="complete-btn" onclick="celebrateFinale()" style="background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange)); color: white; border: none; font-size: 18px; padding: 18px 36px;">
+                🎉 Отпраздновать победу! 🎊
+            </button>
+        </div>
+    </section>
+
+</main>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // =====================
+    // PARTICLES
+    // =====================
+    function createParticles() {
+        const container = document.getElementById('particles');
+        const colors = ['#00d4ff', '#a855f7', '#00ff88', '#ffcc00', '#ff3366'];
+
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = (8 + Math.random() * 12) + 's';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            container.appendChild(p);
+        }
+    }
+    createParticles();
+
+    // =====================
+    // NAVIGATION
+    // =====================
+    const sections = ['intro', 'etap1', 'etap2', 'etap3', 'finale'];
+    let currentSection = 'intro';
+    const completedSections = new Set();
+
+    // Restore state from localStorage
+    try {
+        const saved = JSON.parse(localStorage.getItem('quest_progress') || '[]');
+        saved.forEach(s => completedSections.add(s));
+        updateProgressUI();
+    } catch(e) {}
+
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const target = this.dataset.tab;
+            if (this.classList.contains('locked')) return;
+            switchSection(target);
+        });
+    });
+
+    function switchSection(name) {
+        currentSection = name;
+
+        // Update tabs
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.nav-tab[data-tab="${name}"]`).classList.add('active');
+
+        // Update sections
+        document.querySelectorAll('.etap-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('section-' + name).classList.add('active');
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        updateProgressUI();
+    }
+
+    function completeSection(name) {
+        completedSections.add(name);
+
+        // Save to localStorage
+        try {
+            localStorage.setItem('quest_progress', JSON.stringify([...completedSections]));
+        } catch(e) {}
+
+        // Unlock next section
+        const idx = sections.indexOf(name);
+        if (idx < sections.length - 1) {
+            const nextName = sections[idx + 1];
+            const nextTab = document.querySelector(`.nav-tab[data-tab="${nextName}"]`);
+            if (nextTab) nextTab.classList.remove('locked');
+
+            // Mark current tab as completed
+            const currentTab = document.querySelector(`.nav-tab[data-tab="${name}"]`);
+            if (currentTab) currentTab.classList.add('completed');
+
+            // Switch to next section
+            setTimeout(() => {
+                showToast(`✅ ${getSectionName(name)} завершён!`);
+                switchSection(nextName);
+            }, 300);
+        }
+
+        updateProgressUI();
+    }
+
+    function getSectionName(name) {
+        const names = {
+            'intro': 'Легенда',
+            'etap1': 'Этап 1',
+            'etap2': 'Этап 2',
+            'etap3': 'Этап 3',
+            'finale': 'Финал'
+        };
+        return names[name] || name;
+    }
+
+    function updateProgressUI() {
+        const totalSteps = sections.length;
+        const completed = completedSections.size;
+        const percent = Math.round((completed / totalSteps) * 100);
+
+        document.getElementById('progress-percent').textContent = percent + '%';
+        document.getElementById('progress-fill').style.width = percent + '%';
+
+        // Update step dots
+        sections.forEach((s, i) => {
+            const dot = document.getElementById('step-dot-' + i);
+            if (!dot) return;
+            dot.classList.remove('active', 'completed');
+
+            if (completedSections.has(s)) {
+                dot.classList.add('completed');
+            } else if (s === currentSection) {
+                dot.classList.add('active');
+            }
+        });
+
+        // Unlock tabs based on completed sections
+        sections.forEach((s, i) => {
+            const tab = document.querySelector(`.nav-tab[data-tab="${s}"]`);
+            if (!tab) return;
+
+            if (i === 0) {
+                tab.classList.remove('locked');
+            } else {
+                const prevSection = sections[i - 1];
+                if (completedSections.has(prevSection)) {
+                    tab.classList.remove('locked');
+                }
+            }
+
+            if (completedSections.has(s)) {
+                tab.classList.add('completed');
+            }
+        });
+    }
+
+    // Initialize UI
+    updateProgressUI();
+
+    // =====================
+    // TOAST
+    // =====================
+    function showToast(text) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-text').textContent = text;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // =====================
+    // STEP CHECKBOXES
+    // =====================
+    function toggleCheck(el) {
+        el.classList.toggle('checked');
+        const stepItem = el.closest('.step-item');
+        if (stepItem) {
+            stepItem.classList.toggle('done');
+        }
+    }
+
+    // =====================
+    // ACCORDION
+    // =====================
+    function toggleAccordion(header) {
+        header.classList.toggle('open');
+        const body = header.nextElementSibling;
+        body.classList.toggle('show');
+    }
+
+    // =====================
+    // COPY FORMULA
+    // =====================
+    function copyFormula(el, formula) {
+        // Clean up HTML entities for clipboard
+        const clean = formula
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"');
+
+        navigator.clipboard.writeText(clean).then(() => {
+            el.classList.add('copied');
+            const icon = el.querySelector('.copy-icon');
+            if (icon) icon.textContent = '✅';
+            setTimeout(() => {
+                el.classList.remove('copied');
+                if (icon) icon.textContent = '📋';
+            }, 2000);
+            showToast('📋 Формула скопирована!');
+        }).catch(() => {
+            // Fallback
+            const textarea = document.createElement('textarea');
+            textarea.value = clean;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('📋 Формула скопирована!');
+        });
+    }
+
+    // =====================
+    // QUIZ
+    // =====================
+    function checkQuiz(btn, isCorrect) {
+        const options = btn.parentElement.querySelectorAll('.quiz-option');
+        const feedback = btn.closest('.quiz-question').querySelector('.quiz-feedback');
+
+        // Disable all options
+        options.forEach(o => {
+            o.style.pointerEvents = 'none';
+        });
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            feedback.textContent = '✅ Правильно! Молодец!';
+            feedback.className = 'quiz-feedback show correct-feedback';
+        } else {
+            btn.classList.add('wrong');
+            // Highlight correct one
+            options.forEach(o => {
+                if (o.onclick && o.onclick.toString().includes('true')) {
+                    o.classList.add('correct');
+                }
+            });
+            feedback.textContent = '❌ Не совсем! Смотри правильный ответ выше.';
+            feedback.className = 'quiz-feedback show wrong-feedback';
+        }
+    }
+
+    // Fix quiz
+    document.querySelectorAll('.quiz-option').forEach(btn => {
+        // Correct answers are already handled via onclick
+    });
+
+    // =====================
+    // CONFETTI
+    // =====================
+    function launchConfetti() {
+        const container = document.getElementById('confetti');
+        container.style.display = 'block';
+        container.innerHTML = '';
+
+        const colors = ['#ff3366', '#00ff88', '#00d4ff', '#ffcc00', '#a855f7', '#ff8c00'];
+        const shapes = ['■', '●', '▲', '★', '♦', '🎉', '🎊', '⭐', '🌟'];
+
+        for (let i = 0; i < 80; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + '%';
+            piece.style.animationDuration = (2 + Math.random() * 3) + 's';
+            piece.style.animationDelay = Math.random() * 2 + 's';
+            piece.style.color = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.fontSize = (10 + Math.random() * 20) + 'px';
+            piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+            container.appendChild(piece);
+        }
+
+        setTimeout(() => {
+            container.style.display = 'none';
+        }, 6000);
+    }
+
+    function celebrateFinale() {
+        launchConfetti();
+        completedSections.add('finale');
+        try {
+            localStorage.setItem('quest_progress', JSON.stringify([...completedSections]));
+        } catch(e) {}
+        updateProgressUI();
+        showToast('🏆 Поздравляем! Миссия полностью завершена!');
+
+        // Mark finale tab
+        const tab = document.querySelector('.nav-tab[data-tab="finale"]');
+        if (tab) tab.classList.add('completed');
+    }
+
+    // =====================
+    // KEYBOARD SHORTCUT: F9
+    // =====================
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F9') {
+            // F9 logic for the quest is usually handled by Excel, this is just a reminder
+        }
+    });
+
+    // =====================
+    // SMOOTH SECTION TRANSITIONS ON PAGE LOAD
+    // =====================
+    window.addEventListener('load', function() {
+        // If there are completed sections, go to the next uncompleted one
+        if (completedSections.size > 0) {
+            let lastCompleted = -1;
+            sections.forEach((s, i) => {
+                if (completedSections.has(s)) lastCompleted = i;
+            });
+            if (lastCompleted >= 0 && lastCompleted < sections.length - 1) {
+                switchSection(sections[lastCompleted + 1]);
+            } else if (lastCompleted === sections.length - 1) {
+                switchSection('finale');
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
+
+
