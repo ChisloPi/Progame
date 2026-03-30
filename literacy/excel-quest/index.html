@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Интерактивный квест по обучению Excel - найдите похитителя, установите контакт с питомцем и спасите Байтика с помощью формул и фильтров!">
+    <meta name="keywords" content="Excel, обучение, квест, интерактивно, формулы, фильтр, ЕСЛИ">
+    <meta name="author" content="Школа цифровых навыков">
+    <meta property="og:title" content="🕵️‍♂️ МИССИЯ: СПАСЕНИЕ ЦИФРОВОГО ПИТОМЦА">
+    <meta property="og:description" content="Интерактивный квест по обучению Excel - финальный уровень с питомцем">
+    <meta property="og:image" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect fill='%233b82f6' width='200' height='200'/><text x='100' y='120' font-size='80' text-anchor='middle' fill='white'>🐶</text></svg>">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%233b82f6' width='100' height='100' rx='20'/><text x='50' y='75' font-size='60' text-anchor='middle' fill='white'>🐶</text></svg>">
+    <title>🕵️‍♂️ МИССИЯ: СПАСЕНИЕ ЦИФРОВОГО ПИТОМЦА</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-hero: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-orange: #f97316;
+            --accent-purple: #8b5cf6;
+            --text-main: #1e293b;
+            --text-dim: #64748b;
+            --glow-blue: 0 0 20px rgba(59, 130, 246, 0.15);
+            --glow-green: 0 0 20px rgba(34, 197, 94, 0.15);
+            --border-radius: 16px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Keyboard Hint Tooltip */
+        .kbd-hint {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            border-bottom: 2px dashed var(--accent-blue);
+        }
+        .kbd-tooltip {
+            visibility: hidden;
+            width: 280px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 15px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: var(--shadow-md);
+        }
+        .kbd-hint:hover .kbd-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        .keyboard-svg {
+            margin-top: 10px;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .key-rect { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1; }
+        .key-highlight { fill: var(--accent-orange); stroke: #ea580c; stroke-width: 1; }
+        .key-text { fill: #334155; font-family: sans-serif; font-size: 10px; font-weight: bold; }
+        .key-highlight + .key-text { fill: #ffffff; }
+
+        /* Protection from copy */
+        .no-copy {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .hero-badge {
+            display: inline-block;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 50px;
+            padding: 8px 24px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: clamp(28px, 5vw, 52px);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+        .hero-sub {
+            font-size: 16px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .pet-container {
+            margin: 30px auto 0;
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+        .pet-sprite {
+            font-size: 72px;
+            animation: petBounce 2s ease-in-out infinite;
+            display: block;
+            text-align: center;
+            filter: drop-shadow(0 0 20px rgba(59,130,246,0.3));
+        }
+        @keyframes petBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .pet-pulse-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100px; height: 100px;
+            border: 2px solid rgba(59,130,246,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ringPulse 2s ease-out infinite;
+        }
+        @keyframes ringPulse {
+            0% { width: 60px; height: 60px; opacity: 0.8; }
+            100% { width: 140px; height: 140px; opacity: 0; }
+        }
+
+        /* ===== PROGRESS ===== */
+        .progress-section {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px 20px 10px;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .progress-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .progress-percent {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            position: relative;
+        }
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 13px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            position: relative;
+        }
+        .progress-step-dot {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            border: 2px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dim);
+            transition: all 0.4s;
+            position: relative;
+            z-index: 2;
+        }
+        .progress-step-dot.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+            box-shadow: var(--glow-blue);
+        }
+        .progress-step-dot.completed {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #fff;
+            box-shadow: var(--glow-green);
+        }
+        .progress-step-label {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== NAVIGATION ===== */
+        .nav-tabs {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 20px;
+        }
+        .nav-tabs-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .nav-tabs-inner::-webkit-scrollbar { display: none; }
+        .nav-tab {
+            flex-shrink: 0;
+            padding: 16px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dim);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+            user-select: none;
+        }
+        .nav-tab:hover { color: var(--text-main); }
+        .nav-tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+        .nav-tab.completed::after {
+            content: '✓';
+            margin-left: 6px;
+            color: var(--accent-green);
+            font-size: 12px;
+        }
+        .nav-tab.locked { opacity: 0.4; cursor: not-allowed; }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px 100px;
+        }
+
+        /* Sections */
+        .etap-section { display: none; }
+        .etap-section.active {
+            display: block;
+            animation: fadeSlideIn 0.5s ease;
+        }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section badge */
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .section-badge.intro { background: #f3e8ff; color: var(--accent-purple); border: 1px solid #e9d5ff; }
+        .section-badge.etap1 { background: #dbeafe; color: var(--accent-blue); border: 1px solid #bfdbfe; }
+        .section-badge.etap2 { background: #dcfce7; color: var(--accent-green); border: 1px solid #bbf7d0; }
+        .section-badge.etap3 { background: #ffedd5; color: var(--accent-orange); border: 1px solid #fed7aa; }
+        .section-badge.finale { background: #fef9c3; color: var(--accent-yellow); border: 1px solid #fef08a; }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+        .card:hover {
+            border-color: #cbd5e1;
+            box-shadow: var(--shadow-md);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .card-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        .card-icon.blue { background: #dbeafe; }
+        .card-icon.green { background: #dcfce7; }
+        .card-icon.red { background: #fee2e2; }
+        .card-icon.yellow { background: #fef9c3; }
+        .card-icon.purple { background: #f3e8ff; }
+        .card-icon.orange { background: #ffedd5; }
+        .card-title { font-size: 18px; font-weight: 800; color: var(--text-main); }
+        .card-subtitle { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+        /* ===== LEGEND BLOCK ===== */
+        .legend-block {
+            background: linear-gradient(135deg, #f3e8ff, #dbeafe);
+            border: 1px solid #e9d5ff;
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #334155;
+            position: relative;
+            overflow: hidden;
+        }
+        .legend-block::before {
+            content: '📜';
+            position: absolute;
+            top: 12px; right: 16px;
+            font-size: 28px;
+            opacity: 0.3;
+        }
+        .legend-block .speaker {
+            font-weight: 700;
+            color: var(--accent-purple);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== DOWNLOAD BUTTON ===== */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 14px 28px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(59,130,246,0.4);
+        }
+
+        /* ===== STEPS ===== */
+        .step-list { list-style: none; }
+        .step-item {
+            display: flex;
+            gap: 16px;
+            padding: 18px 0;
+            border-bottom: 1px solid #f1f5f9;
+            align-items: flex-start;
+        }
+        .step-item:last-child { border-bottom: none; }
+        .step-number {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: #dbeafe;
+            border: 1px solid #bfdbfe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--accent-blue);
+            flex-shrink: 0;
+        }
+        .step-content { flex: 1; }
+        .step-content p { font-size: 14px; line-height: 1.7; color: var(--text-main); }
+        .step-content .step-detail { font-size: 13px; color: var(--text-dim); margin-top: 6px; line-height: 1.6; }
+        .step-content .menu-path {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-blue);
+            margin: 6px 0;
+            flex-wrap: wrap;
+        }
+        .menu-path .arrow { color: var(--accent-purple); font-weight: 700; }
+
+        /* Highlight step */
+        .step-item.highlight {
+            background: #f0fdf4;
+            border-radius: 12px;
+            padding: 18px 16px;
+            border: 1px solid #bbf7d0;
+            margin: 8px 0;
+        }
+        .step-item.highlight .step-number {
+            background: #dcfce7;
+            border-color: #bbf7d0;
+            color: var(--accent-green);
+        }
+
+        /* Checkbox step */
+        .step-checkbox {
+            width: 22px; height: 22px;
+            border-radius: 6px;
+            border: 2px solid #cbd5e1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s;
+            margin-top: 7px;
+        }
+        .step-checkbox:hover { border-color: var(--accent-green); }
+        .step-checkbox.checked { background: var(--accent-green); border-color: var(--accent-green); }
+        .step-checkbox.checked::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 700; }
+        .step-item.done .step-content p { text-decoration: line-through; opacity: 0.5; }
+
+        /* ===== EXCEL MOCKUP ===== */
+        .excel-mock {
+            background: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            margin: 12px 0;
+        }
+        .excel-toolbar {
+            background: #f1f5f9;
+            padding: 8px 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-bottom: 1px solid #cbd5e1;
+            color: #475569;
+        }
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .excel-table th {
+            background: #e2e8f0;
+            padding: 8px 10px;
+            text-align: left;
+            font-weight: 700;
+            color: #1e293b;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 11px;
+        }
+        .excel-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            font-size: 12px;
+        }
+        .excel-table tr:hover td { background: #f8fafc; }
+        .excel-table .highlight-row td { background: #f0fdf4; border-left: 3px solid var(--accent-green); }
+
+        /* ===== FORMULA BLOCK ===== */
+        .formula-block {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid var(--accent-green);
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin: 16px 0;
+        }
+        .formula-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .formula-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            color: #166534;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            overflow-x: auto;
+        }
+        .formula-code:hover { background: #f8fafc; }
+        .formula-code .copy-icon { font-size: 16px; opacity: 0.5; flex-shrink: 0; margin-left: 12px; }
+        .formula-code.copied { border-color: var(--accent-green); box-shadow: var(--glow-green); }
+        .formula-desc { font-size: 13px; color: var(--text-dim); margin-top: 10px; line-height: 1.7; }
+        .formula-desc strong { color: var(--text-main); }
+
+        /* ===== TIP BLOCK ===== */
+        .tip-block {
+            background: #fefce8;
+            border: 1px solid #fef08a;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .tip-block .tip-icon { font-size: 20px; flex-shrink: 0; }
+        .tip-block p { font-size: 13px; line-height: 1.7; color: var(--text-dim); }
+        .tip-block p strong { color: #a16207; }
+
+        /* ===== WARNING BLOCK ===== */
+        .warning-block {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .warning-block .warn-icon { font-size: 20px; flex-shrink: 0; }
+        .warning-block p { font-size: 13px; line-height: 1.7; color: #991b1b; }
+
+        /* Key combo */
+        .key-combo { display: inline-flex; align-items: center; gap: 4px; }
+        .key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px; height: 28px;
+            padding: 0 8px;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-bottom: 3px solid #94a3b8;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .key.special {
+            background: #dbeafe;
+            border-color: #93c5fd;
+            border-bottom-color: #60a5fa;
+            color: var(--accent-blue);
+        }
+
+        /* Hidden blocks */
+        .demo-zone, .filter-demo, .quiz-block, .accordion { display: none; }
+
+        /* ===== VISUAL GUIDE ===== */
+        .visual-guide {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .visual-guide-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ===== CHEATSHEET ===== */
+        .cheatsheet {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .cheatsheet-title {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cheatsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .cheatsheet-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: #e2e8f0;
+            color: #1e293b;
+            font-weight: 700;
+        }
+        .cheatsheet-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #cbd5e1;
+            color: #334155;
+        }
+        .cheatsheet-table td code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #166534;
+        }
+
+        /* ===== HOMEWORK ===== */
+        .homework-card {
+            background: #fffbef;
+            border: 1px solid #fef08a;
+            border-radius: 14px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        .homework-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--accent-orange);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .homework-card p { font-size: 14px; line-height: 1.7; color: var(--text-dim); }
+
+        /* ===== FINAL BANNER ===== */
+        .final-banner {
+            background: linear-gradient(135deg, #f0fdf4, #dbeafe);
+            border: 2px solid var(--accent-green);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .final-banner h2 {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--accent-green);
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .final-banner p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-main);
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .final-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0fdf4;
+            border: 1px solid var(--accent-green);
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-top: 20px;
+        }
+
+        /* ===== COMPLETE BUTTON ===== */
+        .complete-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--accent-green), #16a34a);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(34,197,94,0.3);
+            margin-top: 20px;
+        }
+        .complete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(34,197,94,0.4);
+        }
+        .complete-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* ===== CONFETTI ===== */
+        .confetti-container {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 10px; height: 10px;
+            top: -10px;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #ffffff;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-green);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            z-index: 999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* ===== POINTER ARROW ===== */
+        .pointer-arrow {
+            display: inline-block;
+            font-size: 20px;
+            animation: pointerPulse 1s ease-in-out infinite;
+        }
+        .pointer-arrow.right { animation: arrow-bounce 1s ease-in-out infinite; }
+        .pointer-arrow.down { animation: arrow-bounce-down 1s ease-in-out infinite; }
+        @keyframes pointerPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+        @keyframes arrow-bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(6px); }
+        }
+        @keyframes arrow-bounce-down {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(6px); }
+        }
+
+        /* Arrow annotations */
+        .arrow-annotation {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--accent-orange);
+            font-size: 13px;
+            font-weight: 700;
+            animation: arrow-bounce 1s ease-in-out infinite;
+            margin: 4px 0;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .card { padding: 20px; }
+            .hero { padding: 40px 16px 30px; }
+            .excel-mock { overflow-x: auto; }
+            .excel-table { min-width: 500px; }
+            .nav-tab { padding: 14px 14px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Confetti container -->
+<div class="confetti-container" id="confetti"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <span>✅</span>
+    <span id="toast-text">Этап завершён!</span>
+</div>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+    <div class="hero-badge">🔐 СЕКРЕТНАЯ ОПЕРАЦИЯ</div>
+    <h1>🕵️‍♂️ МИССИЯ: СПАСЕНИЕ<br>ЦИФРОВОГО ПИТОМЦА</h1>
+
+    <div class="pet-container">
+        <div class="pet-pulse-ring"></div>
+        <span class="pet-sprite">🐶</span>
+    </div>
+</header>
+
+<!-- ===== PROGRESS ===== -->
+<div class="progress-section" role="region" aria-label="Прогресс квеста">
+    <div class="progress-header">
+        <span class="progress-label">Прогресс миссии</span>
+        <span class="progress-percent" id="progress-percent" aria-live="polite" aria-atomic="true">0%</span>
+    </div>
+    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="progress-steps" role="group" aria-label="Этапы квеста">
+        <div class="progress-step">
+            <div class="progress-step-dot active" id="step-dot-0" role="img" aria-label="Легенда - текущий этап">📜</div>
+            <span class="progress-step-label">Легенда</span>
+        </div>
+        <div class="progress-step">
+            <div class="progress-step-dot" id="step-dot-1" role="img" aria-label="Этап 1 - Поиск">🔍</div>
+            <span class="progress-step-label">Этап 1</span>
+        </div>
+        <div class="progress-step">
+            <div class="progress-step-dot" id="step-dot-2" role="img" aria-label="Этап 2 - Контакт">📡</div>
+            <span class="progress-step-label">Этап 2</span>
+        </div>
+        <div class="progress-step">
+            <div class="progress-step-dot" id="step-dot-3" role="img" aria-label="Этап 3 - Карта здоровья">💚</div>
+            <span class="progress-step-label">Этап 3</span>
+        </div>
+        <div class="progress-step">
+            <div class="progress-step-dot" id="step-dot-4" role="img" aria-label="Финал - Завершение">🏆</div>
+            <span class="progress-step-label">Финал</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== NAV TABS ===== -->
+<nav class="nav-tabs" role="tablist" aria-label="Основная навигация этапов">
+    <div class="nav-tabs-inner">
+        <div class="nav-tab active" data-tab="intro" role="tab" aria-selected="true" tabindex="0"><span class="tab-icon">📜</span> Легенда</div>
+        <div class="nav-tab" data-tab="etap1" role="tab" aria-selected="false" tabindex="-1"><span class="tab-icon">🔍</span> Этап 1</div>
+        <div class="nav-tab locked" data-tab="etap2" role="tab" aria-selected="false" aria-disabled="true" tabindex="-1"><span class="tab-icon">📡</span> Этап 2</div>
+        <div class="nav-tab locked" data-tab="etap3" role="tab" aria-selected="false" aria-disabled="true" tabindex="-1"><span class="tab-icon">💚</span> Этап 3</div>
+        <div class="nav-tab locked" data-tab="finale" role="tab" aria-selected="false" aria-disabled="true" tabindex="-1"><span class="tab-icon">🏆</span> Финал</div>
+    </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-content">
+
+    <!-- ============================== -->
+    <!-- INTRO / LEGEND SECTION -->
+    <!-- ============================== -->
+    <section class="etap-section active" id="section-intro">
+        <div class="section-badge intro">📜 Вводная легенда</div>
+
+        <div class="legend-block">
+            <span class="speaker">🔊 Голос командира (читай вслух!):</span>
+            «Агенты, внимание!<br><br>
+            Сегодня в 07:00 с сервера <strong>Цифрового зоопарка</strong> было похищено редкое существо — <strong>цифровой питомец по кличке Байтик</strong> 🐶.<br><br>
+            По данным нашей разведки, похитителем является один из <strong>100 подозреваемых</strong>, чьи досье хранятся в секретной базе данных.<br><br>
+            Свидетели сообщают следующие приметы:<br>
+            🔸 <strong>Рыжие волосы</strong><br>
+            🔸 <strong>Шрам на левой щеке</strong><br>
+            🔸 <strong>Размер обуви — 38</strong><br><br>
+            Ваша миссия — <strong>вычислить похитителя</strong>, <strong>наладить связь с Байтиком</strong> и <strong>создать систему жизнеобеспечения</strong> для его спасения.<br><br>
+            Удачи, агенты! Время пошло!»
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon purple">📥</div>
+                <div>
+                    <div class="card-title">Скачай секретную базу данных</div>
+                    <div class="card-subtitle">Файл с досье 100 подозреваемых</div>
+                </div>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px; line-height: 1.7;">
+                Прежде чем начать миссию, нужно скачать файл с базой данных подозреваемых. Нажми на кнопку ниже — файл откроется на Яндекс.Диске. Нажми <strong style="color: var(--accent-orange)">«Скачать»</strong> и открой в Excel.
+            </p>
+
+            <a href="https://disk.yandex.ru/i/3fbxTmGzVd4b_g" target="_blank" class="download-btn">
+                <span class="btn-icon">📂</span>
+                Скачать базу подозреваемых
+                <span class="pointer-arrow right">👈</span>
+            </a>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="complete-btn" onclick="completeSection('intro')">
+                База скачана, начинаем миссию! 🚀
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- ETAP 1: FILTER SECTION -->
+    <!-- ============================== -->
+    <section class="etap-section" id="section-etap1">
+        <div class="section-badge etap1">🔍 Этап 1: «Поиск по базе»</div>
+
+        <div class="legend-block">
+            <span class="speaker">🔊 Командир:</span>
+            «Агенты! Перед вами база данных из 100 подозреваемых. Среди них — похититель Байтика. Используйте фильтры, чтобы отсеять невиновных и найти преступника. Приметы: рыжий, шрам на левой щеке, обувь 38-го размера.»
+        </div>
+
+        <!-- Цель -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">🎯</div>
+                <div>
+                    <div class="card-title">Цель этапа</div>
+                    <div class="card-subtitle">Что нужно сделать</div>
+                </div>
+            </div>
+            <p style="font-size: 14px; line-height: 1.7; color: var(--text-main);">
+                Среди 100 подозреваемых найти <strong>ОДНОГО</strong>, у кого совпадают все три приметы:<br><br>
+                🔸 Цвет волос: <strong>рыжий</strong><br>
+                🔸 Примета: <strong>шрам на левой щеке</strong><br>
+                🔸 Размер обуви: <strong>38</strong>
+            </p>
+        </div>
+
+        <!-- Инструкция -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">📝</div>
+                <div>
+                    <div class="card-title">Пошаговая инструкция</div>
+                    <div class="card-subtitle">Делай по порядку — каждый шаг важен!</div>
+                </div>
+            </div>
+
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <p>📂 <strong>Открой файл</strong> с базой подозреваемых в Excel.</p>
+                        <div class="step-detail">У тебя должна быть таблица с колонками: Номер, Имя, Возраст, Цвет волос, Особая примета, Размер обуви и другие.</div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <p>🖱️ <strong>Выдели всю таблицу</strong> — нажми на ячейку A1, затем нажми
+                            <span class="kbd-hint">
+                                <span class="key-combo"><span class="key special">Ctrl</span><span>+</span><span class="key">A</span></span>
+                                <span class="kbd-tooltip">
+                                    Ctrl+A — выделить всё
+                                    <div class="keyboard-svg">
+                                        <svg width="280" height="145" viewBox="0 0 280 145">
+                                            <!-- Ряд 1: Tab Q W E R T Y U I O P -->
+                                            <rect class="key-rect" x="3" y="3" width="32" height="26" rx="3"/>
+                                            <text class="key-text" x="19" y="20" text-anchor="middle" style="font-size:8px">Tab</text>
+                                            <rect class="key-rect" x="38" y="3" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="49" y="20" text-anchor="middle">Q</text>
+                                            <rect class="key-rect" x="63" y="3" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="74" y="20" text-anchor="middle">W</text>
+                                            <rect class="key-rect" x="88" y="3" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="99" y="20" text-anchor="middle">E</text>
+                                            <rect class="key-rect" x="113" y="3" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="124" y="20" text-anchor="middle">R</text>
+                                            <rect class="key-rect" x="138" y="3" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="149" y="20" text-anchor="middle">T</text>
+                                            <rect class="key-rect" x="163" y="3" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="174" y="20" text-anchor="middle">Y</text>
+                                            <rect class="key-rect" x="188" y="3" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="199" y="20" text-anchor="middle">U</text>
+                                            <rect class="key-rect" x="213" y="3" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="224" y="20" text-anchor="middle">I</text>
+                                            <rect class="key-rect" x="238" y="3" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="249" y="20" text-anchor="middle">O</text>
+                                            <!-- Ряд 2: Caps A S D F G H J K L -->
+                                            <rect class="key-rect" x="3" y="32" width="36" height="26" rx="3"/>
+                                            <text class="key-text" x="21" y="49" text-anchor="middle" style="font-size:8px">Caps</text>
+                                            <rect class="key-highlight" x="42" y="32" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="53" y="49" text-anchor="middle">A</text>
+                                            <rect class="key-rect" x="67" y="32" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="78" y="49" text-anchor="middle">S</text>
+                                            <rect class="key-rect" x="92" y="32" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="103" y="49" text-anchor="middle">D</text>
+                                            <rect class="key-rect" x="117" y="32" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="128" y="49" text-anchor="middle">F</text>
+                                            <rect class="key-rect" x="142" y="32" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="153" y="49" text-anchor="middle">G</text>
+                                            <rect class="key-rect" x="167" y="32" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="178" y="49" text-anchor="middle">H</text>
+                                            <rect class="key-rect" x="192" y="32" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="203" y="49" text-anchor="middle">J</text>
+                                            <rect class="key-rect" x="217" y="32" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="228" y="49" text-anchor="middle">K</text>
+                                            <rect class="key-rect" x="242" y="32" width="34" height="26" rx="3"/>
+                                            <text class="key-text" x="259" y="49" text-anchor="middle" style="font-size:7px">Enter</text>
+                                            <!-- Ряд 3: Shift Z X C V B N M -->
+                                            <rect class="key-rect" x="3" y="61" width="40" height="26" rx="3"/>
+                                            <text class="key-text" x="23" y="78" text-anchor="middle" style="font-size:8px">Shift</text>
+                                            <rect class="key-rect" x="46" y="61" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="57" y="78" text-anchor="middle">Z</text>
+                                            <rect class="key-rect" x="71" y="61" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="82" y="78" text-anchor="middle">X</text>
+                                            <rect class="key-rect" x="96" y="61" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="107" y="78" text-anchor="middle">C</text>
+                                            <rect class="key-rect" x="121" y="61" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="132" y="78" text-anchor="middle">V</text>
+                                            <rect class="key-rect" x="146" y="61" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="157" y="78" text-anchor="middle">B</text>
+                                            <rect class="key-rect" x="171" y="61" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="182" y="78" text-anchor="middle">N</text>
+                                            <rect class="key-rect" x="196" y="61" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="207" y="78" text-anchor="middle">M</text>
+                                            <rect class="key-rect" x="221" y="61" width="55" height="26" rx="3"/>
+                                            <text class="key-text" x="248" y="78" text-anchor="middle" style="font-size:8px">Shift</text>
+                                            <!-- Ряд 4: Ctrl Fn Win Alt [Space] Alt Ctrl -->
+                                            <rect class="key-highlight" x="3" y="90" width="34" height="26" rx="3"/>
+                                            <text class="key-text" x="20" y="107" text-anchor="middle" style="font-size:9px">Ctrl</text>
+                                            <rect class="key-rect" x="40" y="90" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="51" y="107" text-anchor="middle" style="font-size:8px">Fn</text>
+                                            <rect class="key-rect" x="65" y="90" width="22" height="26" rx="3"/>
+                                            <text class="key-text" x="76" y="107" text-anchor="middle" style="font-size:8px">Win</text>
+                                            <rect class="key-rect" x="90" y="90" width="26" height="26" rx="3"/>
+                                            <text class="key-text" x="103" y="107" text-anchor="middle" style="font-size:9px">Alt</text>
+                                            <rect class="key-rect" x="119" y="90" width="90" height="26" rx="3"/>
+                                            <text class="key-text" x="164" y="107" text-anchor="middle" style="font-size:8px">Пробел</text>
+                                            <rect class="key-rect" x="212" y="90" width="26" height="26" rx="3"/>
+                                            <text class="key-text" x="225" y="107" text-anchor="middle" style="font-size:9px">Alt</text>
+                                            <rect class="key-rect" x="241" y="90" width="34" height="26" rx="3"/>
+                                            <text class="key-text" x="258" y="107" text-anchor="middle" style="font-size:9px">Ctrl</text>
+                                            <!-- Подпись -->
+                                            <text x="140" y="140" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="sans-serif">Нажми Ctrl + A</text>
+                                        </svg>
+                                    </div>
+                                </span>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <p>🔽 <strong>Включи фильтр!</strong></p>
+                        <div class="step-detail">👉 Куда нажимать в Excel:</div>
+                        <div class="menu-path">
+                            Главная <span class="arrow">→</span> Сортировка и фильтр <span class="arrow">→</span> Фильтр
+                        </div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <p>🟠 <strong>Фильтруем по цвету волос.</strong> Нажми стрелку ▼ в столбце «Цвет волос» и выбери только «рыжий».</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <p>🔴 <strong>Фильтруем по особой примете.</strong> Нажми стрелку ▼ в столбце «Особая примета» и выбери «шрам на левой щеке».</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <p>👟 <strong>Фильтруем по размеру обуви.</strong> Нажми стрелку ▼ в столбце «Размер обуви» и выбери «38».</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Результат -->
+        <div class="step-item highlight" style="list-style: none;">
+            <div class="step-number" style="background: #dcfce7; border-color: #bbf7d0; color: #16a34a;">🎉</div>
+            <div class="step-content">
+                <p><strong>🎯 РЕЗУЛЬТАТ:</strong> На экране осталась <strong>ОДНА строка</strong> — это и есть похититель!</p>
+                <div class="step-detail" style="font-size: 15px; margin-top: 10px;">
+                    <strong style="color: var(--accent-orange);">🦊 Похититель — Лиса-99 (строка № 47)</strong>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="complete-btn" onclick="completeSection('etap1')">
+                Похититель найден! Перейти к Этапу 2 🔓
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- ETAP 2: SECRET CHAT -->
+    <!-- ============================== -->
+    <section class="etap-section" id="section-etap2">
+        <div class="section-badge etap2">📡 Этап 2: «Секретный чат»</div>
+
+        <div class="legend-block">
+            <span class="speaker">🔊 Командир:</span>
+            «Отлично, агенты! Похититель вычислен — это Лиса-99. Спецназ уже выехал. Но Байтик заперт в цифровой клетке и пытается с нами связаться. Он шлёт сигналы — случайные фразы. Нам нужно построить приёмник, который будет их ловить!»
+        </div>
+
+        <!-- Цель -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">🎯</div>
+                <div>
+                    <div class="card-title">Цель этапа</div>
+                    <div class="card-subtitle">Создать «кнопку связи» с Байтиком</div>
+                </div>
+            </div>
+            <p style="font-size: 14px; line-height: 1.7; color: var(--text-main);">
+                При нажатии <span class="kbd-hint">
+                    <span class="key-combo"><span class="key special">F9</span></span>
+                    <span class="kbd-tooltip">
+                        F9 — пересчёт формул. На ноутбуке может потребоваться <strong>Fn + F9</strong>
+                        <div class="keyboard-svg">
+                            <svg width="280" height="116" viewBox="0 0 280 116">
+                                <!-- Ряд F-клавиш: Esc F1..F12 -->
+                                <rect class="key-rect" x="3" y="3" width="22" height="24" rx="3"/>
+                                <text class="key-text" x="14" y="19" text-anchor="middle" style="font-size:8px">Esc</text>
+                                <rect class="key-rect" x="30" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="39" y="19" text-anchor="middle" style="font-size:7px">F1</text>
+                                <rect class="key-rect" x="51" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="60" y="19" text-anchor="middle" style="font-size:7px">F2</text>
+                                <rect class="key-rect" x="72" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="81" y="19" text-anchor="middle" style="font-size:7px">F3</text>
+                                <rect class="key-rect" x="93" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="102" y="19" text-anchor="middle" style="font-size:7px">F4</text>
+                                <rect class="key-rect" x="114" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="123" y="19" text-anchor="middle" style="font-size:7px">F5</text>
+                                <rect class="key-rect" x="135" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="144" y="19" text-anchor="middle" style="font-size:7px">F6</text>
+                                <rect class="key-rect" x="156" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="165" y="19" text-anchor="middle" style="font-size:7px">F7</text>
+                                <rect class="key-rect" x="177" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="186" y="19" text-anchor="middle" style="font-size:7px">F8</text>
+                                <rect class="key-highlight" x="198" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="207" y="19" text-anchor="middle" style="font-size:7px">F9</text>
+                                <rect class="key-rect" x="219" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="228" y="19" text-anchor="middle" style="font-size:7px">F10</text>
+                                <rect class="key-rect" x="240" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="249" y="19" text-anchor="middle" style="font-size:7px">F11</text>
+                                <rect class="key-rect" x="261" y="3" width="18" height="24" rx="3"/>
+                                <text class="key-text" x="270" y="19" text-anchor="middle" style="font-size:7px">F12</text>
+                                <!-- Ряд цифр (упрощённо) -->
+                                <rect class="key-rect" x="3" y="30" width="272" height="24" rx="3" style="fill:#2a3444"/>
+                                <text x="140" y="46" text-anchor="middle" fill="#64748b" font-size="8" font-family="sans-serif">1  2  3  4  5  6  7  8  9  0</text>
+                                <!-- Нижний ряд: Ctrl Fn Win Alt Space Alt Ctrl -->
+                                <rect class="key-rect" x="3" y="57" width="30" height="24" rx="3"/>
+                                <text class="key-text" x="18" y="73" text-anchor="middle" style="font-size:8px">Ctrl</text>
+                                <rect class="key-highlight" x="36" y="57" width="22" height="24" rx="3"/>
+                                <text class="key-text" x="47" y="73" text-anchor="middle" style="font-size:8px">Fn</text>
+                                <rect class="key-rect" x="61" y="57" width="22" height="24" rx="3"/>
+                                <text class="key-text" x="72" y="73" text-anchor="middle" style="font-size:8px">Win</text>
+                                <rect class="key-rect" x="86" y="57" width="22" height="24" rx="3"/>
+                                <text class="key-text" x="97" y="73" text-anchor="middle" style="font-size:8px">Alt</text>
+                                <rect class="key-rect" x="111" y="57" width="90" height="24" rx="3"/>
+                                <text class="key-text" x="156" y="73" text-anchor="middle" style="font-size:8px">Пробел</text>
+                                <rect class="key-rect" x="204" y="57" width="22" height="24" rx="3"/>
+                                <text class="key-text" x="215" y="73" text-anchor="middle" style="font-size:8px">Alt</text>
+                                <rect class="key-rect" x="229" y="57" width="22" height="24" rx="3"/>
+                                <text class="key-text" x="240" y="73" text-anchor="middle" style="font-size:8px">Ctrl</text>
+                                <!-- Подпись -->
+                                <text x="140" y="100" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="sans-serif">Зажми Fn, затем нажми F9</text>
+                            </svg>
+                        </div>
+                    </span>
+                </span> в ячейке будет появляться случайная фраза от питомца.
+            </p>
+        </div>
+
+        <!-- Шаг 1: Словарь -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">📝</div>
+                <div>
+                    <div class="card-title">Шаг 1: Создай словарь фраз</div>
+                    <div class="card-subtitle">Лист 2 — «Секретный чат»</div>
+                </div>
+            </div>
+
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <p>📄 <strong>Создай новый лист</strong> в Excel и назови его «Секретный чат».</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <p>📋 <strong>Заполни словарь фраз.</strong> Введи эти данные в столбцы A и B:</p>
+                        <div class="excel-mock no-copy" style="margin-top: 12px;">
+                            <div class="excel-toolbar">📊 Лист «Секретный чат»</div>
+                            <table class="excel-table">
+                                <thead>
+                                    <tr><th></th><th>A</th><th>B</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1</td><td><strong>Номер</strong></td><td><strong>Фраза</strong></td></tr>
+                                    <tr><td>2</td><td>1</td><td>Гав! Я тут! 🐶</td></tr>
+                                    <tr><td>3</td><td>2</td><td>Скучаю... 😢</td></tr>
+                                    <tr><td>4</td><td>3</td><td>Принеси вкусняшку! 🍕</td></tr>
+                                    <tr><td>5</td><td>4</td><td>Давай играть! 🎮</td></tr>
+                                    <tr><td>6</td><td>5</td><td>Zzz... сплю... 💤</td></tr>
+                                    <tr><td>7</td><td>6</td><td>Ты мой лучший друг! ❤️</td></tr>
+                                    <tr><td>8</td><td>7</td><td>Хочу гулять! 🌳</td></tr>
+                                    <tr><td>9</td><td>8</td><td>Байт-байт-байт! 💾</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Шаг 2: Формула -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon orange">⚡</div>
+                <div>
+                    <div class="card-title">Шаг 2: Вводим формулу приёма</div>
+                    <div class="card-subtitle">Магия Excel</div>
+                </div>
+            </div>
+
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <p>🎲 <strong>Введи формулу в ячейку D1:</strong></p>
+                        <div class="formula-block">
+                            <div class="formula-label">📍 Ячейка D1 — Случайная фраза</div>
+                            <div class="formula-code" onclick="copyFormula(this, '=ИНДЕКС(B2:B9;СЛУЧМЕЖДУ(1;8))')">
+                                <span>=ИНДЕКС(B2:B9;СЛУЧМЕЖДУ(1;8))</span>
+                                <span class="copy-icon">📋</span>
+                            </div>
+                            <div class="formula-desc"><strong>Что делает:</strong> Выбирает случайную строку из твоего списка сообщений.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <p>📻 <strong>Нажми <span class="kbd-hint">
+                            <span class="key-combo"><span class="key special">F9</span></span>
+                            <span class="kbd-tooltip">
+                                На ноутбуке: <strong>Fn + F9</strong>
+                                <div class="keyboard-svg">
+                                    <svg width="280" height="80" viewBox="0 0 280 80">
+                                        <!-- Ряд F-клавиш -->
+                                        <rect class="key-rect" x="3" y="3" width="22" height="24" rx="3"/>
+                                        <text class="key-text" x="14" y="19" text-anchor="middle" style="font-size:8px">Esc</text>
+                                        <rect class="key-rect" x="30" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="39" y="19" text-anchor="middle" style="font-size:7px">F1</text>
+                                        <rect class="key-rect" x="51" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="60" y="19" text-anchor="middle" style="font-size:7px">F2</text>
+                                        <rect class="key-rect" x="72" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="81" y="19" text-anchor="middle" style="font-size:7px">F3</text>
+                                        <rect class="key-rect" x="93" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="102" y="19" text-anchor="middle" style="font-size:7px">F4</text>
+                                        <rect class="key-rect" x="114" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="123" y="19" text-anchor="middle" style="font-size:7px">F5</text>
+                                        <rect class="key-rect" x="135" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="144" y="19" text-anchor="middle" style="font-size:7px">F6</text>
+                                        <rect class="key-rect" x="156" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="165" y="19" text-anchor="middle" style="font-size:7px">F7</text>
+                                        <rect class="key-rect" x="177" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="186" y="19" text-anchor="middle" style="font-size:7px">F8</text>
+                                        <rect class="key-highlight" x="198" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="207" y="19" text-anchor="middle" style="font-size:7px">F9</text>
+                                        <rect class="key-rect" x="219" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="228" y="19" text-anchor="middle" style="font-size:7px">F10</text>
+                                        <rect class="key-rect" x="240" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="249" y="19" text-anchor="middle" style="font-size:7px">F11</text>
+                                        <rect class="key-rect" x="261" y="3" width="18" height="24" rx="3"/>
+                                        <text class="key-text" x="270" y="19" text-anchor="middle" style="font-size:7px">F12</text>
+                                        <!-- Нижний ряд с Fn -->
+                                        <rect class="key-rect" x="3" y="32" width="30" height="24" rx="3"/>
+                                        <text class="key-text" x="18" y="48" text-anchor="middle" style="font-size:8px">Ctrl</text>
+                                        <rect class="key-highlight" x="36" y="32" width="22" height="24" rx="3"/>
+                                        <text class="key-text" x="47" y="48" text-anchor="middle" style="font-size:8px">Fn</text>
+                                        <rect class="key-rect" x="61" y="32" width="22" height="24" rx="3"/>
+                                        <text class="key-text" x="72" y="48" text-anchor="middle" style="font-size:8px">Win</text>
+                                        <rect class="key-rect" x="86" y="32" width="22" height="24" rx="3"/>
+                                        <text class="key-text" x="97" y="48" text-anchor="middle" style="font-size:8px">Alt</text>
+                                        <rect class="key-rect" x="111" y="32" width="90" height="24" rx="3"/>
+                                        <text class="key-text" x="156" y="48" text-anchor="middle" style="font-size:8px">Пробел</text>
+                                        <!-- Подпись -->
+                                        <text x="140" y="74" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="sans-serif">Зажми Fn, затем нажми F9</text>
+                                    </svg>
+                                </div>
+                            </span>
+                        </span></strong> — это твоя «кнопка связи»!</p>
+                        <div class="step-detail">Каждое нажатие на <span class="key-combo"><span class="key special">F9</span></span> меняет фразу в ячейке!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="complete-btn" onclick="completeSection('etap2')">
+                Связь установлена! Перейти к Этапу 3 💚
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- ETAP 3: TAMAGOTCHI -->
+    <!-- ============================== -->
+    <!-- ETAP 3: TAMAGOTCHI -->
+    <!-- ============================== -->
+    <section class="etap-section" id="section-etap3">
+        <div class="section-badge etap3">💚 Этап 3: «Медицинская карта Байтика»</div>
+
+        <div class="legend-block">
+            <span class="speaker">🔊 Командир:</span>
+            «Байтик спасён, но ослаблен. Нужно создать "медицинскую карту" питомца, которая будет автоматически показывать его состояние. Используем формулу ЕСЛИ (IF).»
+        </div>
+
+        <div class="card" style="border-left: 4px solid #22c55e; background: #f0fdf4;">
+            <div class="card-header">
+                <div class="card-icon green">💚</div>
+                <div>
+                    <div class="card-title">Создаём "Карту здоровья" Байтика</div>
+                    <div class="card-subtitle">Таблица с умными формулами, которые "думают"</div>
+                </div>
+            </div>
+
+            <p style="font-size: 14px; line-height: 1.8; color: var(--text-main); margin-bottom: 16px;">
+                <strong>Что это:</strong> Создадим список показателей здоровья питомца (Сытость, Настроение, Здоровье), а главное — напишем формулы, которые автоматически скажут нам, в каком состоянии Байтик. Числа вводим сами (от 1 до 10), а формулы моментально показывают результат!
+            </p>
+
+            <!-- Шаг 1: Структура таблицы -->
+            <div class="card" style="background: #ffffff; margin-top: 16px;">
+                <div class="card-header">
+                    <div class="card-icon blue">📋</div>
+                    <div>
+                        <div class="card-title">Шаг 1: Создаём таблицу показателей</div>
+                        <div class="card-subtitle">В столбцах A, B, C</div>
+                    </div>
+                </div>
+
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <p><strong>Создай новый лист</strong> с названием <strong>«Карта здоровья»</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <p><strong>В ячейке A1</strong> напиши <strong>«Показатель»</strong>, в B1 — <strong>«Значение»</strong>, в C1 — <strong>«Статус»</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <p><strong>В столбец A внеси названия показателей:</strong></p>
+                            <div class="excel-mock" style="margin: 12px 0;">
+                                <div class="excel-toolbar">📊 Карта здоровья Байтика</div>
+                                <table class="excel-table" style="font-size: 13px;">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>A</th>
+                                            <th>B</th>
+                                            <th>C</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td><strong>Показатель</strong></td>
+                                            <td><strong>Значение</strong></td>
+                                            <td><strong>Статус</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td><strong>Сытость</strong></td>
+                                            <td style="background: #e0f2fe;">5</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td><strong>Настроение</strong></td>
+                                            <td style="background: #e0f2fe;">7</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>4</td>
+                                            <td><strong>Здоровье</strong></td>
+                                            <td style="background: #e0f2fe;">8</td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tip-block" style="margin-top: 12px;">
+                                <div class="tip-icon">💡</div>
+                                <p>В ячейках B2, B3, B4 вводим числа от 1 до 10 вручную. Это ты будешь менять позже, имитируя кормление, игру и лечение.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 2: Формула ЕСЛИ для каждого показателя -->
+            <div class="card" style="background: #ffffff; margin-top: 16px;">
+                <div class="card-header">
+                    <div class="card-icon orange">⚡</div>
+                    <div>
+                        <div class="card-title">Шаг 2: Вводим формулы ЕСЛИ в столбец C</div>
+                        <div class="card-subtitle">Формулы будут "читать" числа из столбца B и показывать статус</div>
+                    </div>
+                </div>
+
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <p><strong>Клацни на ячейку C2</strong> — это для статуса Сытости</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <p><strong>Введи вложенную формулу ЕСЛИ с вложением:</strong></p>
+                            <div class="formula-block" style="margin: 12px 0; background: #f1f5f9;">
+                                <div class="formula-label">📍 Формула для столбца C (Сытость)</div>
+                                <div class="formula-code" onclick="copyFormula(this, '=ЕСЛИ(B2&lt;4;\"😢 Голодный!\";ЕСЛИ(B2&lt;=7;\"😐 Нормально\";\"😊 Сытый и довольный!\"))') ">
+                                    <span>=ЕСЛИ(B2&lt;4;"😢 Голодный!";ЕСЛИ(B2&lt;=7;"😐 Нормально";"😊 Сытый и довольный!"))</span>
+                                    <span class="copy-icon">📋</span>
+                                </div>
+                                <div class="formula-desc" style="margin-top: 8px;">
+                                    <strong>Что делает:</strong> Проверяет: если B2 &lt; 4 → "голодный", если &lt;= 7 → "нормально", иначе → "сытый"
+                                </div>
+                            </div>
+                            <div class="tip-block" style="margin-top: 12px;">
+                                <div class="tip-icon">💡</div>
+                                <p>Это вложенная формула! Одна формула ЕСЛИ внутри другой. Первая проверяет "голодный ли?", вторая (вложенная) проверяет "нормально или сытый?"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <p><strong>Нажми Enter</strong> — в ячейке появится статус с эмодзи!</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">7</div>
+                        <div class="step-content">
+                            <p><strong>В ячейку C3</strong> (для Настроения) введи похожую формулу:</p>
+                            <div class="formula-block" style="margin: 12px 0; background: #f1f5f9;">
+                                <div class="formula-label">📍 Формула для столбца C (Настроение)</div>
+                                <div class="formula-code" onclick="copyFormula(this, '=ЕСЛИ(B3&lt;4;\"😢 Грустный!\";ЕСЛИ(B3&lt;=7;\"😐 Нейтральный\";\"😄 Веселый!\"))') ">
+                                    <span>=ЕСЛИ(B3&lt;4;"😢 Грустный!";ЕСЛИ(B3&lt;=7;"😐 Нейтральный";"😄 Веселый!"))</span>
+                                    <span class="copy-icon">📋</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">8</div>
+                        <div class="step-content">
+                            <p><strong>В ячейку C4</strong> (для Здоровья) введи:</p>
+                            <div class="formula-block" style="margin: 12px 0; background: #f1f5f9;">
+                                <div class="formula-label">📍 Формула для столбца C (Здоровье)</div>
+                                <div class="formula-code" onclick="copyFormula(this, '=ЕСЛИ(B4&lt;4;\"🤒 Болен!\";ЕСЛИ(B4&lt;=7;\"⚕️ Нужен уход\";\"💪 Здоров!\"))') ">
+                                    <span>=ЕСЛИ(B4&lt;4;"🤒 Болен!";ЕСЛИ(B4&lt;=7;"⚕️ Нужен уход";"💪 Здоров!"))</span>
+                                    <span class="copy-icon">📋</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 3: Итоговая ячейка -->
+            <div class="card" style="background: #ffffff; margin-top: 16px;">
+                <div class="card-header">
+                    <div class="card-icon purple">🎯</div>
+                    <div>
+                        <div class="card-title">Шаг 3: Создаём "Общее здоровье"</div>
+                        <div class="card-subtitle">Суммируем все показатели и выносим финальный диагноз</div>
+                    </div>
+                </div>
+
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-number">9</div>
+                        <div class="step-content">
+                            <p><strong>В ячейку A6</strong> напиши <strong>«Общее здоровье»</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">10</div>
+                        <div class="step-content">
+                            <p><strong>В ячейку B6</strong> введи формулу для суммы всех показателей:</p>
+                            <div class="formula-block" style="margin: 12px 0; background: #f1f5f9;">
+                                <div class="formula-label">📍 Формула для суммы</div>
+                                <div class="formula-code" onclick="copyFormula(this, '=СУММ(B2:B4)') ">
+                                    <span>=СУММ(B2:B4)</span>
+                                    <span class="copy-icon">📋</span>
+                                </div>
+                                <div class="formula-desc" style="margin-top: 8px;">
+                                    <strong>Что делает:</strong> Складывает все три показателя. Максимум = 30, минимум = 3
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">11</div>
+                        <div class="step-content">
+                            <p><strong>В ячейку C6</strong> введи формулу ЕСЛИ с тремя условиями (вложенная):</p>
+                            <div class="formula-block" style="margin: 12px 0; background: #f1f5f9;">
+                                <div class="formula-label">📍 Формула для общего статуса</div>
+                                <div class="formula-code" onclick="copyFormula(this, '=ЕСЛИ(B6&lt;12;\"🚨 Критическое состояние!\";ЕСЛИ(B6&lt;=21;\"⚠️ Нужен уход\";\"✅ Байтик счастлив!\"))') ">
+                                    <span>=ЕСЛИ(B6&lt;12;"🚨 Критическое состояние!";ЕСЛИ(B6&lt;=21;"⚠️ Нужен уход";"✅ Байтик счастлив!"))</span>
+                                    <span class="copy-icon">📋</span>
+                                </div>
+                                <div class="formula-desc" style="margin-top: 8px;">
+                                    <strong>Что делает:</strong> Если сумма &lt; 12 → критическое, если &lt;= 21 → нужен уход, иначе → счастлив!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 4: Игра -->
+            <div class="card" style="background: #ffffff; margin-top: 16px;">
+                <div class="card-header">
+                    <div class="card-icon red">🕹️</div>
+                    <div>
+                        <div class="card-title">Шаг 4: Как играть</div>
+                        <div class="card-subtitle">Меняй числа, смотри как меняются статусы!</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 14px; line-height: 1.9; color: var(--text-main);">
+                    <p><strong>📝 Правила игры:</strong></p>
+                    <p style="margin-top: 10px;"><strong>1.</strong> Смотри на таблицу с показателями</p>
+                    <p style="margin-top: 10px;"><strong>2.</strong> Меняй числа в столбце B вручную (например, увеличивай Сытость с 5 на 8, чтобы покормить питомца)</p>
+                    <p style="margin-top: 10px;"><strong>3.</strong> Смотри как формулы в столбце C <strong>мгновенно меняют</strong> статусы! Эмодзи и текст будут обновляться автоматически</p>
+                    <p style="margin-top: 10px;"><strong>4.</strong> Общее здоровье в ячейке B6 пересчитается само, и финальный статус в C6 скажет, счастлив ли Байтик</p>
+                    <p style="margin-top: 10px;"><strong>5.</strong> <strong>Цель:</strong> Держи Байтика в состоянии «Байтик счастлив!» (общее здоровье от 22 до 30)</p>
+                </div>
+
+                <div class="tip-block" style="margin-top: 16px;">
+                    <div class="tip-icon">💡</div>
+                    <p><strong>Суть механики:</strong> Это не просто таблица — это система жизнеобеспечения! Формулы ЕСЛИ работают как "мозг" питомца: сначала "проверяют" каждый показатель, потом "решают" — в каком состоянии Байтик. Одна цифра меняется в B → формула в C сразу на это реагирует. Это и есть самая простая версия ИИ!</p>
+                </div>
+
+                <div class="tip-block" style="margin-top: 12px;">
+                    <div class="tip-icon">🏆</div>
+                    <p><strong>Челлендж:</strong> Поэкспериментируй с разными сценариями:
+                    <br>• Что если Сытость упадет до 1? 
+                    <br>• Что если все три показателя будут по 10?
+                    <br>• Какое минимальное общее здоровье нужно, чтобы Байтик был счастлив?</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="complete-btn" onclick="completeSection('etap3')">
+                Байтик готов к жизни! Перейти к финалу 🏆
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- FINALE -->
+    <!-- ============================== -->
+    <section class="etap-section" id="section-finale">
+        <div class="section-badge finale">🏆 Финал миссии</div>
+
+        <div class="final-banner">
+            <h2>🎉 МИССИЯ ВЫПОЛНЕНА!</h2>
+            <p>
+                ✅ Мы вычислили похитителя с помощью фильтров.<br><br>
+                ✅ Мы наладили связь с Байтиком.<br><br>
+                ✅ Мы создали медицинскую карту и спасли питомца формулами!
+            </p>
+            <div class="final-badge">
+                🎖️ Звание: Кибер-агент с мастерством ЕСЛИ()
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <span class="pet-sprite" style="font-size: 80px; display: inline-block;">🐶</span>
+            <p style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 10px;">
+                Байтик счастлив! 💚
+            </p>
+            <p style="font-size: 15px; color: var(--text-dim); margin-top: 8px;">
+                Ты научился читать показатели, писать умные формулы и спасать виртуальных питомцев!
+            </p>
+        </div>
+
+        <!-- Что мы изучили -->
+        <div class="card" style="border-left: 4px solid #22c55e; background: #f0fdf4; margin-top: 24px;">
+            <div class="card-header">
+                <div class="card-icon green">📚</div>
+                <div>
+                    <div class="card-title">Что мы изучили на этом уровне</div>
+                    <div class="card-subtitle">Три главных навыка работы с формулами ЕСЛИ</div>
+                </div>
+            </div>
+
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <p><strong>Вложенные формулы ЕСЛИ</strong> — одна формула внутри другой</p>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-top: 6px;">Первая ЕСЛИ проверяет одно условие, вторая (вложенная) — уточняет результат</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <p><strong>Автоматические реакции</strong> — формулы реагируют на числа в реальном времени</p>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-top: 6px;">Как только ты меняешь значение в столбце B, статус в столбце C обновляется мгновенно</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <p><strong>Эмодзи и текст в формулах</strong> — формулы могут выдавать не только числа</p>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-top: 6px;">😊😐😢 и другие символы — это видимые результаты логики Excel</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Шпаргалка -->
+        <div class="cheatsheet" style="margin-top: 24px;">
+            <div class="cheatsheet-title">📎 Шпаргалка — формулы для Карты здоровья</div>
+            <div style="overflow-x: auto;">
+                <table class="cheatsheet-table">
+                    <thead>
+                        <tr>
+                            <th>Показатель</th>
+                            <th>Формула для статуса</th>
+                            <th>Итоговая ячейка</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Сытость</strong> (C2)</td>
+                            <td><code>=ЕСЛИ(B2&lt;4;"😢 Голодный!";ЕСЛИ(B2&lt;=7;"😐 Нормально";"😊 Сытый и довольный!"))</code></td>
+                            <td>B6 = СУММ(B2:B4)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Настроение</strong> (C3)</td>
+                            <td><code>=ЕСЛИ(B3&lt;4;"😢 Грустный!";ЕСЛИ(B3&lt;=7;"😐 Нейтральный";"😄 Веселый!"))</code></td>
+                            <td>C6 = ЕСЛИ(...)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Здоровье</strong> (C4)</td>
+                            <td><code>=ЕСЛИ(B4&lt;4;"🤒 Болен!";ЕСЛИ(B4&lt;=7;"⚕️ Нужен уход";"💪 Здоров!"))</code></td>
+                            <td>Сумма: 3–30</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: center; padding: 12px; background: #e0f2fe;"><strong>Общий статус в C6:</strong> <code>=ЕСЛИ(B6&lt;12;"🚨 Критическое!";ЕСЛИ(B6&lt;=21;"⚠️ Нужен уход";"✅ Счастлив!"))</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Продвинутые челленджи -->
+        <div class="card" style="border-left: 4px solid #8b5cf6; background: #f3e8ff; margin-top: 24px;">
+            <div class="card-header">
+                <div class="card-icon purple">⭐</div>
+                <div>
+                    <div class="card-title">Продвинутые челленджи (для суперагентов)</div>
+                    <div class="card-subtitle">Экспериментируй и расширяй Карту здоровья</div>
+                </div>
+            </div>
+
+            <div style="font-size: 14px; line-height: 1.9; color: var(--text-main);">
+                <p><strong>1. Добавь 4-й показатель</strong> (например, «Энергия»)</p>
+                <p style="margin-top: 10px;"><strong>2. Расширь шкалу</strong> — сделай таблицу для большего количества оценок (от 1 до 20 вместо 1-10)</p>
+                <p style="margin-top: 10px;"><strong>3. Создай условное форматирование</strong> — раскрась ячейки в зависимости от значения (красный = опасно, жёлтый = нормально, зелёный = отлично)</p>
+                <p style="margin-top: 10px;"><strong>4. Добавь формулу снижения</strong> — создай макрос или ручную кнопку, которая снижает показатели каждый день (чтобы питомец опять нуждался в уходе)</p>
+                <p style="margin-top: 10px;"><strong>5. Создай "режим скорой помощи"</strong> — добавь кнопку, которая выполняет несколько действий одновременно</p>
+            </div>
+
+            <div class="tip-block" style="margin-top: 16px;">
+                <div class="tip-icon">💡</div>
+                <p><strong>Главная идея:</strong> Excel с формулами ЕСЛИ — это не просто таблица. Это система, в которой данные "говорят" между собой. Ты пишешь правила (формулы), и они работают сами, реагируя на любые изменения. Это основа ИИ!</p>
+            </div>
+        </div>
+
+        <!-- Домашнее задание -->
+        <div class="homework-card" style="margin-top: 24px;">
+            <div class="homework-title">🎁 Домашнее задание — Супер-Байтик</div>
+            <p>
+                Модифицируй Карту здоровья:
+                <br><br>
+                1. <strong>Добавь название листа</strong> "Парк цифровых питомцев" и создай 3 копии Карты здоровья для других виртуальных питомцев 🐱 🐭 🐹
+                <br><br>
+                2. <strong>Для каждого питомца</strong> придумай свои бонусы (например, кот должен спать, хомячок бежать в колесе, а черепаха ничего не делать).
+                <br><br>
+                3. <strong>Добавь финальную таблицу "Рейтинг питомцев"</strong>, которая покажет, кто из них сейчас самый счастливый, основываясь на формулах из других листов.
+                <br><br>
+                4. <strong>Экспортируй как .xlsx</strong> и поделись с друзьями — они смогут управлять своими виртуальными питомцами!
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="complete-btn" onclick="celebrateFinale()" style="background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange)); color: white; font-size: 18px; padding: 18px 36px;">
+                🎉 Отпраздновать спасение Байтика! 🎊
+            </button>
+        </div>
+    </section>
+
+</main>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // =====================
+    // NAVIGATION
+    // =====================
+    const sections = ['intro', 'etap1', 'etap2', 'etap3', 'finale'];
+    let currentSection = 'intro';
+    const completedSections = new Set();
+
+    // Restore state
+    try {
+        const saved = JSON.parse(localStorage.getItem('quest_progress') || '[]');
+        saved.forEach(s => completedSections.add(s));
+        updateProgressUI();
+    } catch(e) {}
+
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const target = this.dataset.tab;
+            if (this.classList.contains('locked')) return;
+            switchSection(target);
+        });
+        
+        // Keyboard navigation
+        tab.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const target = this.dataset.tab;
+                if (!this.classList.contains('locked')) switchSection(target);
+            }
+        });
+    });
+
+    function switchSection(name) {
+        currentSection = name;
+        document.querySelectorAll('.nav-tab').forEach((t, i) => {
+            if (t.getAttribute('data-tab') === name) {
+                t.classList.add('active');
+                t.setAttribute('aria-selected', 'true');
+                t.setAttribute('tabindex', '0');
+            } else {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+                t.setAttribute('tabindex', '-1');
+            }
+        });
+        document.querySelectorAll('.etap-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('section-' + name).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        localStorage.setItem('activeSection', name);
+        updateProgressUI();
+    }
+
+    function completeSection(name) {
+        completedSections.add(name);
+        try {
+            localStorage.setItem('quest_progress', JSON.stringify([...completedSections]));
+        } catch(e) {}
+
+        const idx = sections.indexOf(name);
+        if (idx < sections.length - 1) {
+            const nextName = sections[idx + 1];
+            const nextTab = document.querySelector(`.nav-tab[data-tab="${nextName}"]`);
+            if (nextTab) nextTab.classList.remove('locked');
+
+            const currentTab = document.querySelector(`.nav-tab[data-tab="${name}"]`);
+            if (currentTab) currentTab.classList.add('completed');
+
+            setTimeout(() => {
+                showToast('✅ ' + getSectionName(name) + ' завершён!');
+                switchSection(nextName);
+            }, 300);
+        }
+        updateProgressUI();
+    }
+
+    function getSectionName(name) {
+        const names = { 'intro': 'Легенда', 'etap1': 'Этап 1', 'etap2': 'Этап 2', 'etap3': 'Этап 3', 'finale': 'Финал' };
+        return names[name] || name;
+    }
+
+    function updateProgressUI() {
+        const totalSteps = sections.length;
+        const completed = completedSections.size;
+        const percent = Math.round((completed / totalSteps) * 100);
+
+        document.getElementById('progress-percent').textContent = percent + '%';
+        document.getElementById('progress-fill').style.width = percent + '%';
+        
+        // Update aria attributes
+        const progressBar = document.querySelector('[role="progressbar"]');
+        if (progressBar) {
+            progressBar.setAttribute('aria-valuenow', percent);
+        }
+
+        sections.forEach((s, i) => {
+            const dot = document.getElementById('step-dot-' + i);
+            if (!dot) return;
+            dot.classList.remove('active', 'completed');
+            if (completedSections.has(s)) {
+                dot.classList.add('completed');
+                dot.setAttribute('aria-label', dot.getAttribute('aria-label').replace('текущий этап', 'выполнено'));
+            }
+            else if (s === currentSection) {
+                dot.classList.add('active');
+                dot.setAttribute('aria-label', dot.getAttribute('aria-label').replace('выполнено', 'текущий этап'));
+            }
+        });
+
+        sections.forEach((s, i) => {
+            const tab = document.querySelector(`.nav-tab[data-tab="${s}"]`);
+            if (!tab) return;
+            if (i === 0) tab.classList.remove('locked');
+            else {
+                const prevSection = sections[i - 1];
+                if (completedSections.has(prevSection)) {
+                    tab.classList.remove('locked');
+                    tab.removeAttribute('aria-disabled');
+                } else {
+                    tab.setAttribute('aria-disabled', 'true');
+                }
+            }
+            if (completedSections.has(s)) tab.classList.add('completed');
+        });
+    }
+    updateProgressUI();
+
+    // =====================
+    // TOAST
+    // =====================
+    function showToast(text) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-text').textContent = text;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // =====================
+    // COPY FORMULA
+    // =====================
+    function copyFormula(el, formula) {
+        const clean = formula
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"');
+
+        navigator.clipboard.writeText(clean).then(() => {
+            el.classList.add('copied');
+            const icon = el.querySelector('.copy-icon');
+            if (icon) icon.textContent = '✅';
+            setTimeout(() => {
+                el.classList.remove('copied');
+                if (icon) icon.textContent = '📋';
+            }, 2000);
+            showToast('📋 Формула скопирована!');
+        }).catch(() => {
+            const textarea = document.createElement('textarea');
+            textarea.value = clean;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('📋 Формула скопирована!');
+        });
+    }
+
+    // =====================
+    // CONFETTI
+    // =====================
+    function launchConfetti() {
+        const container = document.getElementById('confetti');
+        container.style.display = 'block';
+        container.innerHTML = '';
+
+        const colors = ['#ff3366', '#00ff88', '#3b82f6', '#ffcc00', '#a855f7', '#ff8c00'];
+        const shapes = ['■', '●', '▲', '✦', '♦', '🎉', '🎊', '⭐', '🌟'];
+
+        for (let i = 0; i < 80; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + '%';
+            piece.style.animationDuration = (2 + Math.random() * 3) + 's';
+            piece.style.animationDelay = Math.random() * 2 + 's';
+            piece.style.color = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.fontSize = (10 + Math.random() * 20) + 'px';
+            piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+            container.appendChild(piece);
+        }
+        setTimeout(() => { container.style.display = 'none'; }, 6000);
+    }
+
+    function celebrateFinale() {
+        launchConfetti();
+        completedSections.add('finale');
+        try {
+            localStorage.setItem('quest_progress', JSON.stringify([...completedSections]));
+        } catch(e) {}
+        updateProgressUI();
+        showToast('🏆 Поздравляем! Миссия полностью завершена!');
+
+        const tab = document.querySelector('.nav-tab[data-tab="finale"]');
+        if (tab) tab.classList.add('completed');
+    }
+
+    // =====================
+    // =====================
+    // CELEBRATE
+
+    // Mobile touch support for tooltips
+    document.querySelectorAll('.kbd-hint').forEach(hint => {
+        hint.addEventListener('touchstart', function(e) {
+            const tooltip = this.querySelector('.kbd-tooltip');
+            if (tooltip) {
+                tooltip.style.visibility = 'visible';
+                tooltip.style.opacity = '1';
+            }
+        }, { passive: true });
+        
+        hint.addEventListener('touchend', function(e) {
+            const tooltip = this.querySelector('.kbd-tooltip');
+            if (tooltip) {
+                setTimeout(() => {
+                    tooltip.style.visibility = 'hidden';
+                    tooltip.style.opacity = '0';
+                }, 2000);
+            }
+        });
+    });
+    window.addEventListener('load', function() {
+        const lastSection = localStorage.getItem('activeSection') || 'intro';
+        switchSection(lastSection);
+    });
+</script>
+
+</body>
+</html>
